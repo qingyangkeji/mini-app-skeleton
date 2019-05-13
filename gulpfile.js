@@ -17,27 +17,15 @@ const copyFilePath = extArr.reduce((arr,ext) => {
 	arr.push(`${srcPath}/**/*${ext}`);
 	return arr;
 }, []);
+const distPath = path.resolve(__dirname, 'dist')
 
-// 修改app.json
-const writeAppJson = (params) => {
-	fs.readFile(`${srcPath}/app.json`, function(err, data){
-		if (err){
-				return console.error(err)
-		}
-		const dataJson = JSON.parse(data.toString())
-		dataJson.pages.push(params)
-		const str = JSON.stringify(dataJson, null, 2)
-		fs.writeFile(`${srcPath}/app.json`, str, function(err){
-				if(err){
-						console.error(err)
-				}
-		})
-	})
+// 清空dist
+const clean = () => {
+	return del([distPath])
 }
 
-const distPath = path.resolve(__dirname, 'dist');
-
-gulp.task('copy', function () {
+// 复制文件
+const copy = done => {
 	fs.copySync(srcPath, distPath, {
 		filter: (src, dest) => {
 			const extname = path.extname(src);
@@ -48,9 +36,11 @@ gulp.task('copy', function () {
 			return copyExtArr.includes(extname);
 		}
 	})
-});
+	done()
+}
 
-gulp.task('compile-stylus', ['copy'], function () {
+// 编译stylus文件
+const compileStylus = () => {
 	return gulp.src(stylusPath)
 		.pipe(stylus())
 		.pipe(
@@ -74,33 +64,34 @@ gulp.task('compile-stylus', ['copy'], function () {
 		)
 		.pipe(
 			gulp.dest(distPath)
-		);
-});
+		)
+}
+// 修改app.json
+const writeAppJson = (params) => {
+	fs.readFile(`${srcPath}/app.json`, function(err, data){
+		if (err){
+				return console.error(err)
+		}
+		const dataJson = JSON.parse(data.toString())
+		dataJson.pages.push(params)
+		const str = JSON.stringify(dataJson, null, 2)
+		fs.writeFile(`${srcPath}/app.json`, str, function(err){
+				if(err){
+						console.error(err)
+				}
+		})
+	})
+}
 
-gulp.task('develop', ['copy', 'compile-stylus'], function() {
-	gulp.watch(copyFilePath, ['copy']);
-	gulp.watch(stylusPath, ['compile-stylus'])
-})
+// 监听
+const watchs = done => {
+	gulp.watch(copyFilePath, gulp.series(copy))
+	gulp.watch(stylusPath, gulp.series(compileStylus))
+	done()
+}
 
-gulp.task('clean', function() {
-    return del([distPath]).then(function() {
-        gulp.start('develop')
-    })
-});
-
-gulp.task('default', function() {
-    gulp.start('clean')
-});
-
-// TODO
-gulp.task('build', function() {
-
-})
-
-
-
-gulp.task('page', function() {
-
+// 新建页面
+const page = (done) => {
 	const cliOptions = {
 		string: 'name',
 		string: 'path'
@@ -119,10 +110,11 @@ gulp.task('page', function() {
 			gulp.dest(`${srcPath}/pages/${destPath}/`)
 		)
 	writeAppJson(`pages/${destPath}/${name}`)
-})
+	done()
+}
 
-gulp.task('comp', function() {
-
+// 新建组件
+const comp = (done) => {
 	const cliOptions = {
 		string: 'name',
 		string: 'path'
@@ -140,4 +132,19 @@ gulp.task('comp', function() {
 		.pipe(
 			gulp.dest(`${srcPath}/component/${destPath}/`)
 		)
-})
+	done()
+}
+
+// develop: 开发
+const dev = () => {
+	return gulp.series(clean, copy, compileStylus, watchs)
+}
+
+// release: 上传
+const release = () => {}
+
+exports.page = gulp.series(page)
+exports.comp = gulp.series(comp)
+exports.dev = dev()
+exports.release = release()
+exports.default = dev()
