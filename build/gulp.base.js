@@ -9,7 +9,11 @@ const cssClean = require('postcss-clean')
 const postCssUrl = require('postcss-url')
 const rename = require('gulp-rename')
 const minimist = require('minimist')
-const { srcPath, allowCopyExtList, stylusPath, distPath, templatePath } = require('./config')
+const child_process = require('child_process')
+const os = require('os')
+const dayjs = require('dayjs')
+const { srcPath, allowCopyExtList, stylusPath, distPath, templatePath, wechatwebdevtools } = require('./config')
+const platform = os.platform() === 'darwin' ? 'mac' : os.platform() === 'win32' ? 'win' : ''
 
 // 清空dist
 const cleanDist = () => {
@@ -120,6 +124,76 @@ const createComponent = (done) => {
   done()
 }
 
+
+const wechatCommand = (argsList) => {
+  console.log(argsList)
+  if (!platform || !wechatwebdevtools.path[platform]) return
+
+  const cli = path.join(wechatwebdevtools.path[platform], 'cli')
+
+  const cliback = child_process.spawn(cli, argsList)
+  console.log('\x1B[33m%s\x1B[39m', `\r\n[执行脚本] ${cli} ${argsList.join(' ')}\r\n`)
+
+  cliback.stdout.on('data', (data) => {
+    console.log(`${data}`)
+  })
+  cliback.stderr.on('data', (data) => {
+    console.log(`${data}`)
+  })
+}
+
+// 微信开发者工具命令行
+const wechatwebdevtoolscli = (done) => {
+  const params = minimist(process.argv.slice(2), {
+    string: wechatwebdevtools.args
+  })
+  delete params._
+
+  let argvOptions = {}
+  for (key in params) {
+    const argv = key.length > 1 ? `--${key}` : `-${key}`
+    const value = params[key]
+    
+    switch(key) {
+      case 'l' || 'login':  // 登录
+        argvOptions[argv] = value || distPath
+        break
+      case 'o' || 'open':  // 打开项目
+        argvOptions[argv] = value || distPath
+        break
+      case 'p' || 'preview':  // 预览
+        argvOptions[argv] = value || distPath
+        break
+      case 'auto-preview':  // 提交后自动预览
+        break
+      case 'u' || 'upload':   // 上传
+        const { isProd, version, versionDesc } = wechatwebdevtools.projectConfig
+        const env = isProd ? '生产环境' : '测试环境'
+        const desc = versionDesc ? `${env}: ${versionDesc}` : `${env}: ${dayjs().format('YYYY-MM-DD HH:mm:ss')} 上传`
+
+        argvOptions[argv] = value || `${version}@${distPath}`
+        argvOptions['--upload-desc'] = desc
+        argvOptions['--upload-info-output'] = path.resolve(__dirname, '../upload.info.json')
+        break
+      case 'close':  // 关闭项目窗口
+        argvOptions[argv] = distPath
+        break
+      case 'quit':  // 退出开发者工具
+        argvOptions[argv] = ''
+        break
+      default:
+    }
+  }
+
+  const argvList = []
+  for (key in argvOptions) {
+    argvList.push(key, argvOptions[key])
+  }
+
+  wechatCommand(argvList)
+  done()
+}
+
 module.exports = {
   createPage: gulp.series(createPage),
   createComponent: gulp.series(createComponent),
@@ -127,4 +201,5 @@ module.exports = {
   cleanDist,
   copyFilesToDist,
   compileStylusFiles,
+  wechatwebdevtoolscli: gulp.series(wechatwebdevtoolscli)
 }
