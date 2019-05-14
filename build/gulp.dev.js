@@ -8,9 +8,9 @@ const build = () => {
 }
 
 const watchs = done => {
-	gulp.watch(copyFilePath, gulp.series(copyFilesToDist))
+  gulp.watch(copyFilePath, gulp.series(copyFilesToDist))
   gulp.watch(stylusPath, gulp.series(compileStylusFiles))
-	done()
+  done()
 }
 
 module.exports = {

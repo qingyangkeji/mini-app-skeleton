@@ -3,9 +3,9 @@ const { develop } = require('./build/gulp.dev')
 const { release } = require('./build/gulp.release')
 
 module.exports = {
-	page: createPage,
-	comp: createComponent,
-	dev: develop,
-	release: release,
-	default: develop
+  page: createPage,
+  comp: createComponent,
+  dev: develop,
+  release: release,
+  default: develop
 }
