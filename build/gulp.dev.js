@@ -3,9 +3,8 @@ const gulp = require('gulp')
 const { cleanDist, copyFilesToDist, compileStylusFiles } = require('./gulp.base')
 const { copyFilePath, stylusPath } = require('./config')
 
-const build = (done) => {
-  gulp.series(cleanDist, copyFilesToDist, compileStylusFiles)
-  done()
+const build = () => {
+  return gulp.series(cleanDist, copyFilesToDist, compileStylusFiles)
 }
 
 const watchs = done => {
@@ -15,5 +14,5 @@ const watchs = done => {
 }
 
 module.exports = {
-  develop: gulp.series(build, watchs)
+  develop: gulp.series(build(), watchs)
 }
