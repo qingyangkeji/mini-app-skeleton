@@ -1,5 +1,4 @@
 const gulp = require('gulp')
-const del = require('del')
 const path = require('path')
 const fs = require('fs-extra')
 const stylus = require('gulp-stylus')
@@ -16,8 +15,9 @@ const { srcPath, allowCopyExtList, stylusPath, distPath, templatePath, wechatweb
 const platform = os.platform() === 'darwin' ? 'mac' : os.platform() === 'win32' ? 'win' : ''
 
 // 清空dist
-const cleanDist = () => {
-  return del([distPath])
+const cleanDist = (done) => {
+  fs.emptyDirSync(distPath)  // 移除del包，改用emptyDirSync
+  done()
 }
 
 // 复制文件
@@ -27,7 +27,6 @@ const copyFilesToDist= done => {
       // 遍历 srcPath 下的所有目录和文件，src为当前文件/目录
       const extname = path.extname(src)  // 扩展名，目录为 ''
       const _allowCopyExtList = [''].concat(allowCopyExtList)
-
       return _allowCopyExtList.includes(extname)
     }
   })
@@ -89,16 +88,24 @@ const getDistEnv = (done) => {
 
 // 编译
 const build = () => {
-  return gulp.series(cleanDist, copyFilesToDist, compileStylusFiles, getDistEnv)
+  const params = minimist(process.argv.slice(2), {
+    boolean: wechatwebdevtools.args
+  })
+  const needBuildList = ['o', 'open', 'u', 'upload']
+  needBuildList.forEach(item => {
+    if (params[item]) {
+      return gulp.series(cleanDist, copyFilesToDist, compileStylusFiles, getDistEnv)
+    }
+  })
+  return gulp.series(getDistEnv)
 }
 
 // 新建页面
 const createPage = (done) => {
-  const cliOptions = {
+  const options = minimist(process.argv.slice(2), {
     string: 'name',
     string: 'path'
-  }
-  const options = minimist(process.argv.slice(2), cliOptions)
+  })
   const { name, path: parentPath } = options
 
   const destPath = parentPath ? `${parentPath}/${name}` : `${name}`
@@ -117,11 +124,10 @@ const createPage = (done) => {
 
 // 新建组件
 const createComponent = (done) => {
-  const cliOptions = {
+  const options = minimist(process.argv.slice(2), {
     string: 'name',
     string: 'path'
-  }
-  const options = minimist(process.argv.slice(2), cliOptions)
+  })
   const { name, path: parentPath } = options
 
   const destPath = parentPath ? `${parentPath}/${name}` : `${name}`
@@ -211,6 +217,7 @@ module.exports = {
   createPage: gulp.series(createPage),
   createComponent: gulp.series(createComponent),
 
+  cleanDist,
   copyFilesToDist,
   compileStylusFiles,
   build,
