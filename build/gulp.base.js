@@ -79,6 +79,19 @@ const _addPathToAppJson = (params) => {
   })
 }
 
+// 获取dist环境
+const getDistEnv = (done) => {
+  const { isProd, version } = require('../dist/config')
+  const env = isProd ? '生产环境' : '测试环境'
+  console.log('\x1B[33m%s\x1B[39m', `\r\n[dist环境] ${env} ${version}\r\n`)
+  done()
+}
+
+// 编译
+const build = () => {
+  return gulp.series(cleanDist, copyFilesToDist, compileStylusFiles, getDistEnv)
+}
+
 // 新建页面
 const createPage = (done) => {
   const cliOptions = {
@@ -126,7 +139,6 @@ const createComponent = (done) => {
 
 
 const wechatCommand = (argsList) => {
-  console.log(argsList)
   if (!platform || !wechatwebdevtools.path[platform]) return
 
   const cli = path.join(wechatwebdevtools.path[platform], 'cli')
@@ -165,9 +177,10 @@ const wechatwebdevtoolscli = (done) => {
         argvOptions[argv] = value || distPath
         break
       case 'auto-preview':  // 提交后自动预览
+        argvOptions[argv] = value || distPath
         break
       case 'u' || 'upload':   // 上传
-        const { isProd, version, versionDesc } = wechatwebdevtools.projectConfig
+        const { isProd, version, versionDesc } = require('../dist/config')
         const env = isProd ? '生产环境' : '测试环境'
         const desc = versionDesc ? `${env}: ${versionDesc}` : `${env}: ${dayjs().format('YYYY-MM-DD HH:mm:ss')} 上传`
 
@@ -198,8 +211,8 @@ module.exports = {
   createPage: gulp.series(createPage),
   createComponent: gulp.series(createComponent),
 
-  cleanDist,
   copyFilesToDist,
   compileStylusFiles,
-  wechatwebdevtoolscli: gulp.series(wechatwebdevtoolscli)
+  build,
+  wechatwebdevtoolscli: gulp.series(build(), wechatwebdevtoolscli)
 }

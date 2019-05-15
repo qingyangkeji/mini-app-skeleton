@@ -4,8 +4,15 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "gulp",
-    "release": "gulp release"
+    "build": "gulp",
+    "dev": "gulp dev",
+    "o": "gulp wechat -o",
+    "l": "gulp wechat -l",
+    "p": "gulp wechat -p",
+    "ap": "gulp wechat --auto-preview",
+    "u": "gulp wechat -u",
+    "close": "gulp wechat --close",
+    "quit": "gulp wechat --quit"
   },
   "author": "",
   "license": "ISC",

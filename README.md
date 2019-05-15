@@ -3,12 +3,12 @@
 ## 使用
 
 - ```shell
-  npm uninstall gulp -g
-  npm install gulp # gulp 4
+  npm uninstall gulp -g  
+  npm install gulp -g  # gulp 4
+  npm install yarn -g
 
-  npm install
-
-  npm run dev
+  yarn
+  yarn dev
   ```
 
 - 将微信小程序的项目目录设置为dist
@@ -31,12 +31,13 @@
 
 - 调用微信开发者工具命令行
   ```shell
-  gulp wechat -l # --login 登录
-  gulp wechat -o # --open 打开项目
-  gulp wechat -p # --preview 预览
-  gulp wechat -u # --upload 上传
-  gulp wechat --close # 关闭项目窗口
-  gulp wechat --quit # 退出开发者工具
+  yarn l # gulp wechat -l, --login 登录
+  yarn o # gulp wechat -o, --open 打开项目
+  yarn p # gulp wechat -p, --preview 预览
+  yarn ap # gulp wechat --auto-preview 自动预览( 开发者微信会自启动 )
+  yarn u # gulp wechat -u, --upload 上传
+  yarn close # gulp wechat --close 关闭项目窗口
+  yarn quit # gulp wechat --quit 退出开发者工具
   ```
 
 
@@ -45,12 +46,9 @@
 - 更新[配置文件](src/config.js)的`version`。
 - 修改[配置文件](src/config.js)的`isProd`为`true`，将环境设置为生产环境。
 - 修改[配置文件](src/config.js)的`versionDesc`，完善版本说明。
-- `gulp wechat -u` 上传代码，提交微信审核。
+- `npm run u` 上传代码，提交微信审核。
 
 ## 版本日志
 
 - 1.0.0
   - 小程序上线。
-
-## TODO
-- [ ] release脚本

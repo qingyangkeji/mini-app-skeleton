@@ -7,7 +7,7 @@ const isMock = false
 const config = {
   isProd,
   version: '1.0.0',
-  versionDesc: '版本描述',
+  versionDesc: '',
   rootUrl: isProd ? '' : isMock ? '' : '',
 }
 

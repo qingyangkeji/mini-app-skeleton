@@ -1,6 +1,5 @@
 
 const path = require('path')
-const projectConfig = require('../src/config')
 
 const srcPath = path.resolve(__dirname, '../src')
 const allowCopyExtList = ['.js', '.json', '.png', '.jpg', '.wxss', '.wxml', '.wxs']
@@ -17,7 +16,6 @@ module.exports = {
   distPath: path.resolve(__dirname, '../dist'),
   templatePath: path.resolve(__dirname, '../template'),
   wechatwebdevtools: {
-    projectConfig,
     path: {
       mac: '/Applications/wechatwebdevtools.app/Contents/MacOS',
       win: ''

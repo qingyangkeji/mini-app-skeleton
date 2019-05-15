@@ -1,11 +1,7 @@
 const gulp = require('gulp')
 
-const { cleanDist, copyFilesToDist, compileStylusFiles } = require('./gulp.base')
+const { build, copyFilesToDist, compileStylusFiles } = require('./gulp.base')
 const { copyFilePath, stylusPath } = require('./config')
-
-const build = () => {
-  return gulp.series(cleanDist, copyFilesToDist, compileStylusFiles)
-}
 
 const watchs = done => {
   gulp.watch(copyFilePath, gulp.series(copyFilesToDist))
