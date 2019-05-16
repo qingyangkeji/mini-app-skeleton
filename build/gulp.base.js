@@ -88,16 +88,22 @@ const getDistEnv = (done) => {
 
 // 编译
 const build = () => {
+  return gulp.series(cleanDist, copyFilesToDist, compileStylusFiles, getDistEnv)
+}
+
+const wechatBuild = () => {
   const params = minimist(process.argv.slice(2), {
     boolean: wechatwebdevtools.args
   })
+
   const needBuildList = ['o', 'open', 'u', 'upload']
+  let returnVal
   needBuildList.forEach(item => {
-    if (params[item]) {
-      return gulp.series(cleanDist, copyFilesToDist, compileStylusFiles, getDistEnv)
+    if (!returnVal && params[item]) {
+      returnVal = build()
     }
   })
-  return gulp.series(getDistEnv)
+  return returnVal || gulp.series(getDistEnv)
 }
 
 // 新建页面
@@ -221,5 +227,5 @@ module.exports = {
   copyFilesToDist,
   compileStylusFiles,
   build,
-  wechatwebdevtoolscli: gulp.series(build(), wechatwebdevtoolscli)
+  wechatwebdevtoolscli: gulp.series(wechatBuild(), wechatwebdevtoolscli)
 }

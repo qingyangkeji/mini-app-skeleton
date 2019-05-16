@@ -8,7 +8,9 @@
   npm install yarn -g
 
   yarn
-  yarn dev
+  yarn dev #开发模式
+
+  yarn build # 编译项目
   ```
 
 - 将微信小程序的项目目录设置为dist
@@ -31,7 +33,6 @@
 
 - 调用微信开发者工具命令行
   ```shell
-  yarn build # 编译项目
   yarn l # gulp wechat -l, --login 登录
   yarn o # gulp wechat -o, --open 打开项目 ( 会提前进行编译 )
   yarn p # gulp wechat -p, --preview 预览
