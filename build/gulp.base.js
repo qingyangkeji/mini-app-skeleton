@@ -176,27 +176,31 @@ const wechatwebdevtoolscli = (done) => {
   let argvOptions = {}
   for (key in params) {
     const argv = key.length > 1 ? `--${key}` : `-${key}`
-    const value = params[key]
     
     switch(key) {
       case 'l' || 'login':  // 登录
-        argvOptions[argv] = value || distPath
+        argvOptions[argv] = distPath
         break
       case 'o' || 'open':  // 打开项目
-        argvOptions[argv] = value || distPath
+        argvOptions[argv] = distPath
         break
       case 'p' || 'preview':  // 预览
-        argvOptions[argv] = value || distPath
+        argvOptions[argv] = distPath
+        break
+      case 'cp':
+        argvOptions['-p'] = distPath  // 自定义预览
+        const customPreview = wechatwebdevtools['compile-condition']
+        customPreview && (argvOptions['--compile-condition'] = JSON.stringify(customPreview))
         break
       case 'auto-preview':  // 提交后自动预览
-        argvOptions[argv] = value || distPath
+        argvOptions[argv] = distPath
         break
       case 'u' || 'upload':   // 上传
         const { isProd, version, versionDesc } = require('../dist/config')
         const env = isProd ? '生产环境' : '测试环境'
         const desc = versionDesc ? `${env}: ${versionDesc}` : `${env}: ${dayjs().format('YYYY-MM-DD HH:mm:ss')} 上传`
 
-        argvOptions[argv] = value || `${version}@${distPath}`
+        argvOptions[argv] = params[key] || `${version}@${distPath}`
         argvOptions['--upload-desc'] = desc
         argvOptions['--upload-info-output'] = path.resolve(__dirname, '../upload.info.json')
         break

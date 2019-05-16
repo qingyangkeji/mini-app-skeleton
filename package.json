@@ -9,6 +9,7 @@
     "o": "gulp wechat -o",
     "l": "gulp wechat -l",
     "p": "gulp wechat -p",
+    "cp": "gulp wechat --cp",
     "ap": "gulp wechat --auto-preview",
     "u": "gulp wechat -u",
     "close": "gulp wechat --close",

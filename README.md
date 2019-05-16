@@ -36,6 +36,7 @@
   yarn l # gulp wechat -l, --login 登录
   yarn o # gulp wechat -o, --open 打开项目 ( 会提前进行编译 )
   yarn p # gulp wechat -p, --preview 预览
+  yarn cp # gulp wechat --cp 自定义预览 ( 可在build/config中配置compile-condition字段为自定义路径和参数 )
   yarn ap # gulp wechat --auto-preview 自动预览( 开发者微信会自启动 )
   yarn u # gulp wechat -u, --upload 上传 ( 会提前进行编译 )
   yarn close # gulp wechat --close 关闭项目窗口

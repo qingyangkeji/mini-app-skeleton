@@ -23,11 +23,16 @@ module.exports = {
     args: [
       'l', 'login',  // 登录
       'o', 'open',  // 打开项目
-      'p', 'preview',  // 预览
+      'p', 'preview',  // 预览 & 自定义预览
       'auto-preview',  // 提交后自动预览
       'u', 'upload', 'desc', 'upload-desc',  // 上传
       'close',  // 关闭项目窗口
       'quit',  // 退出开发者工具
-    ]
+    ],
+    // 配置自定义预览页面 路径&参数
+    'compile-condition': {
+      pathName: "pages/index/index",
+      query: ""
+    }
   },
 }
