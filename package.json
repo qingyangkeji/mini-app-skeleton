@@ -1,5 +1,5 @@
 {
-  "name": "miniapp",
+  "name": "mini-app-skeleton",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -19,6 +19,8 @@
   "license": "ISC",
   "devDependencies": {
     "autoprefixer": "^8.3.0",
+    "chalk": "^2.4.2",
+    "dayjs": "^1.8.14",
     "fs-extra": "^5.0.0",
     "gulp": "^4.0.2",
     "gulp-postcss": "^7.0.1",
@@ -29,7 +31,5 @@
     "postcss-url": "^7.3.2",
     "stylus": "^0.54.5"
   },
-  "dependencies": {
-    "dayjs": "^1.8.14"
-  }
+  "dependencies": {}
 }

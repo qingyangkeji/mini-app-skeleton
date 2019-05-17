@@ -11,6 +11,7 @@ const minimist = require('minimist')
 const child_process = require('child_process')
 const os = require('os')
 const dayjs = require('dayjs')
+const chalk = require('chalk')
 const { srcPath, allowCopyExtList, stylusPath, distPath, templatePath, wechatwebdevtools } = require('./config')
 const platform = os.platform() === 'darwin' ? 'mac' : os.platform() === 'win32' ? 'win' : ''
 
@@ -82,7 +83,7 @@ const _addPathToAppJson = (params) => {
 const getDistEnv = (done) => {
   const { isProd, version } = require('../dist/config')
   const env = isProd ? '生产环境' : '测试环境'
-  console.log('\x1B[33m%s\x1B[39m', `\r\n[dist环境] ${env} ${version}\r\n`)
+  console.log(chalk.green(`[dist环境] ${env} ${version}`))
   done()
 }
 
@@ -156,13 +157,16 @@ const wechatCommand = (argsList) => {
   const cli = path.join(wechatwebdevtools.path[platform], 'cli')
 
   const cliback = child_process.spawn(cli, argsList)
-  console.log('\x1B[33m%s\x1B[39m', `\r\n[执行脚本] ${cli} ${argsList.join(' ')}\r\n`)
-
+  console.log(chalk.green(`[执行脚本] ${cli} ${argsList.join(' ')}`))
   cliback.stdout.on('data', (data) => {
-    console.log(`${data}`)
+    let lines = data.toString().split(/[\n|\r\n]/).filter(i => i)
+    let contents = lines.join('\r\n')
+    console.log(chalk.cyan(contents))
   })
   cliback.stderr.on('data', (data) => {
-    console.log(`${data}`)
+    let lines = data.toString().split(/[\n|\r\n]/).filter(i => i)
+    let contents = lines.join('\r\n')
+    console.log(chalk.red(contents))
   })
 }
 
