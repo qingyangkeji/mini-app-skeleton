@@ -12,7 +12,7 @@ const child_process = require('child_process')
 const os = require('os')
 const dayjs = require('dayjs')
 const chalk = require('chalk')
-const { srcPath, copyFilePath, stylusPath, distPath, templatePath, wechatwebdevtools } = require('./config')
+const { srcPath, copyFilePath, stylusPath, rootPath, distPath, templatePath, wechatwebdevtools } = require('./config')
 const platform = os.platform() === 'darwin' ? 'mac' : os.platform() === 'win32' ? 'win' : ''
 
 // 清空dist
@@ -176,33 +176,33 @@ const wechatwebdevtoolscli = (done) => {
 
     switch(key) {
       case 'l' || 'login':  // 登录
-        argvOptions[argv] = distPath
+        argvOptions[argv] = rootPath
         break
       case 'o' || 'open':  // 打开项目
-        argvOptions[argv] = distPath
+        argvOptions[argv] = rootPath
         break
       case 'p' || 'preview':  // 预览
-        argvOptions[argv] = distPath
+        argvOptions[argv] = rootPath
         break
       case 'cp':
-        argvOptions['-p'] = distPath  // 自定义预览
+        argvOptions['-p'] = rootPath  // 自定义预览
         const customPreview = wechatwebdevtools['compile-condition']
         customPreview && (argvOptions['--compile-condition'] = JSON.stringify(customPreview))
         break
       case 'auto-preview':  // 提交后自动预览
-        argvOptions[argv] = distPath
+        argvOptions[argv] = rootPath
         break
       case 'u' || 'upload':   // 上传
         const { isProd, version, versionDesc } = require('../dist/config')
         const env = isProd ? '生产环境' : '测试环境'
         const desc = versionDesc ? `${env}: ${versionDesc}` : `${env}: ${dayjs().format('YYYY-MM-DD HH:mm:ss')} 上传`
 
-        argvOptions[argv] = params[key] || `${version}@${distPath}`
+        argvOptions[argv] = params[key] || `${version}@${rootPath}`
         argvOptions['--upload-desc'] = desc
         argvOptions['--upload-info-output'] = path.resolve(__dirname, '../upload.info.json')
         break
       case 'close':  // 关闭项目窗口
-        argvOptions[argv] = distPath
+        argvOptions[argv] = rootPath
         break
       case 'quit':  // 退出开发者工具
         argvOptions[argv] = ''

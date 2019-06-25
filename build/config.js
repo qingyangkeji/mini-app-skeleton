@@ -9,6 +9,7 @@ const copyFilePath = allowCopyExtList.reduce((arr, ext) => {
 }, [])
 
 module.exports = {
+  rootPath: path.resolve(__dirname, '../'),
   srcPath,
   allowCopyExtList,
   copyFilePath,
