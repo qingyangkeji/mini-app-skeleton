@@ -17,8 +17,8 @@ module.exports = {
   templatePath: path.resolve(__dirname, '../template'),
   wechatwebdevtools: {
     path: {
-      mac: '/Applications/wechatwebdevtools.app/Contents/MacOS',
-      win: ''
+      mac: '/Applications/wechatwebdevtools.app/Contents/MacOS/cli',
+      win: 'D:/微信web开发者工具/cli.bat' // or 'D:\\微信web开发者工具\\cli.bat'
     },
     args: [
       'l', 'login',  // 登录

@@ -12,7 +12,7 @@ const child_process = require('child_process')
 const os = require('os')
 const dayjs = require('dayjs')
 const chalk = require('chalk')
-const { srcPath, allowCopyExtList, stylusPath, distPath, templatePath, wechatwebdevtools } = require('./config')
+const { srcPath, copyFilePath, stylusPath, distPath, templatePath, wechatwebdevtools } = require('./config')
 const platform = os.platform() === 'darwin' ? 'mac' : os.platform() === 'win32' ? 'win' : ''
 
 // 清空dist
@@ -22,16 +22,9 @@ const cleanDist = (done) => {
 }
 
 // 复制文件
-const copyFilesToDist= done => {
-  fs.copySync(srcPath, distPath, {
-    filter: (src, dest) => {
-      // 遍历 srcPath 下的所有目录和文件，src为当前文件/目录
-      const extname = path.extname(src)  // 扩展名，目录为 ''
-      const _allowCopyExtList = [''].concat(allowCopyExtList)
-      return _allowCopyExtList.includes(extname)
-    }
-  })
-  done()
+const copyFilesToDist= () => {
+  return gulp.src(copyFilePath)
+    .pipe(gulp.dest(distPath))
 }
 
 // 编译stylus文件
@@ -154,7 +147,7 @@ const createComponent = (done) => {
 const wechatCommand = (argsList) => {
   if (!platform || !wechatwebdevtools.path[platform]) return
 
-  const cli = path.join(wechatwebdevtools.path[platform], 'cli')
+  const cli = wechatwebdevtools.path[platform]
 
   const cliback = child_process.spawn(cli, argsList)
   console.log(chalk.green(`[执行脚本] ${cli} ${argsList.join(' ')}`))
@@ -180,7 +173,7 @@ const wechatwebdevtoolscli = (done) => {
   let argvOptions = {}
   for (key in params) {
     const argv = key.length > 1 ? `--${key}` : `-${key}`
-    
+
     switch(key) {
       case 'l' || 'login':  // 登录
         argvOptions[argv] = distPath

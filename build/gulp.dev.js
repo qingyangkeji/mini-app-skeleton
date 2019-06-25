@@ -8,7 +8,7 @@ const { build, compileStylusFiles } = require('./gulp.base')
 const { allowCopyExtList, stylusPath, distPath } = require('./config')
 
 const operateFile = (_type, _path) => {
-  const _relativePath = path.relative(__dirname, _path)
+  const _relativePath = path.relative(__dirname, _path).split(path.sep).join('/')
   const _projectPath = _relativePath.replace(/^(..\/)*src\//g, '')
   const _distPath = path.join(distPath, _projectPath)
   const _allowCopyExtList = [''].concat(allowCopyExtList)
@@ -28,7 +28,8 @@ const operateFile = (_type, _path) => {
   }
 }
 const watchs = done => {
-  gulp.watch(stylusPath, gulp.series(compileStylusFiles))
+  const _stylusPath = stylusPath.split(path.sep).join('/')
+  gulp.watch(_stylusPath, gulp.series(compileStylusFiles))
   const copyFilePathWatcher = gulp.watch(path.resolve(__dirname, '../src'))
 
   copyFilePathWatcher.on('change', (_path) => {
