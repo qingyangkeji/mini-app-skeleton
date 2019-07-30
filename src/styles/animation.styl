@@ -1,0 +1,32 @@
+/**
+* 动效样式
+*/
+
+@keyframes slide-up {
+  0% {
+    transform: translateY(0)
+    opacity: 0
+  }
+
+  1% {
+    transform: translateY(40rpx)
+    opacity: 0
+  }
+
+  100% {
+    transform: translateY(0)
+    opacity: 1
+  }
+}
+
+.all-transition
+  transition: 0.3s all ease-in-out
+
+.slide-up
+  opacity: 0
+  transform: translateY(40px)
+  animation-name: slide-up
+  animation-duration: .7s
+  animation-delay: .6s
+  animation-fill-mode: forwards
+  animation-timing-function: cubic-bezier(.25, .46, .45, .94)

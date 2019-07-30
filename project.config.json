@@ -16,7 +16,7 @@
 	"compileType": "miniprogram",
 	"libVersion": "2.7.0",
 	"appid": "wx1ff48fdc24aaf3eb",
-	"projectname": "mini-app",
+	"projectname": "mini-app-skeleton",
 	"cloudfunctionTemplateRoot": "",
 	"debugOptions": {
 		"hidedInDevtools": []
