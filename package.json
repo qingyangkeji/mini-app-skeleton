@@ -13,7 +13,15 @@
     "ap": "gulp wechat --auto-preview",
     "u": "gulp wechat -u",
     "close": "gulp wechat --close",
-    "quit": "gulp wechat --quit"
+    "quit": "gulp wechat --quit",
+    "lint": "eslint --ext .js ./",
+    "lint-fix": "eslint --fix --ext .js ./"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint",
+      "pre-push": "npm run lint"
+    }
   },
   "author": "",
   "license": "ISC",
@@ -21,15 +29,25 @@
     "autoprefixer": "^8.3.0",
     "chalk": "^2.4.2",
     "dayjs": "^1.8.14",
+    "eslint": "^6.0.1",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-plugin-import": "^2.18.0",
+    "eslint-plugin-node": "^9.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.0",
     "fs-extra": "^5.0.0",
     "gulp": "^4.0.2",
+    "gulp-eslint": "^6.0.0",
+    "gulp-if": "^3.0.0",
     "gulp-postcss": "^7.0.1",
     "gulp-rename": "^1.2.2",
     "gulp-stylus": "^2.7.0",
+    "husky": "^3.0.0",
     "minimist": "^1.2.0",
     "postcss-clean": "^1.1.0",
     "postcss-url": "^7.3.2",
-    "stylus": "^0.54.5"
+    "stylus": "^0.54.5",
+    "through2": "^3.0.1"
   },
   "dependencies": {}
 }

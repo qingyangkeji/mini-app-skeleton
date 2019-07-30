@@ -17,12 +17,12 @@ const platform = os.platform() === 'darwin' ? 'mac' : os.platform() === 'win32' 
 
 // 清空dist
 const cleanDist = (done) => {
-  fs.emptyDirSync(distPath)  // 移除del包，改用emptyDirSync
+  fs.emptyDirSync(distPath) // 移除del包，改用emptyDirSync
   done()
 }
 
 // 复制文件
-const copyFilesToDist= () => {
+const copyFilesToDist = () => {
   return gulp.src(copyFilePath)
     .pipe(gulp.dest(distPath))
 }
@@ -57,17 +57,17 @@ const compileStylusFiles = () => {
 
 // 修改app.json
 const _addPathToAppJson = (params) => {
-  fs.readFile(`${srcPath}/app.json`, function(err, data){
-    if (err){
-        return console.error(err)
+  fs.readFile(`${srcPath}/app.json`, function (err, data) {
+    if (err) {
+      return console.error(err)
     }
     const dataJson = JSON.parse(data.toString())
     dataJson.pages.push(params)
     const str = JSON.stringify(dataJson, null, 2)
-    fs.writeFile(`${srcPath}/app.json`, str, function(err){
-        if(err){
-            console.error(err)
-        }
+    fs.writeFile(`${srcPath}/app.json`, str, function (err) {
+      if (err) {
+        console.error(err)
+      }
     })
   })
 }
@@ -103,8 +103,7 @@ const wechatBuild = () => {
 // 新建页面
 const createPage = (done) => {
   const options = minimist(process.argv.slice(2), {
-    string: 'name',
-    string: 'path'
+    string: ['name', 'path']
   })
   const { name, path: parentPath } = options
 
@@ -118,15 +117,14 @@ const createPage = (done) => {
     .pipe(
       gulp.dest(`${srcPath}/pages/${destPath}/`)
     )
-    _addPathToAppJson(path.join(`pages/${destPath}/${name}`))
+  _addPathToAppJson(path.join(`pages/${destPath}/${name}`))
   done()
 }
 
 // 新建组件
 const createComponent = (done) => {
   const options = minimist(process.argv.slice(2), {
-    string: 'name',
-    string: 'path'
+    string: ['name', 'path']
   })
   const { name, path: parentPath } = options
 
@@ -142,7 +140,6 @@ const createComponent = (done) => {
     )
   done()
 }
-
 
 const wechatCommand = (argsList) => {
   if (!platform || !wechatwebdevtools.path[platform]) return
@@ -171,28 +168,28 @@ const wechatwebdevtoolscli = (done) => {
   delete params._
 
   let argvOptions = {}
-  for (key in params) {
+  for (let key in params) {
     const argv = key.length > 1 ? `--${key}` : `-${key}`
 
-    switch(key) {
-      case 'l' || 'login':  // 登录
+    switch (key) {
+      case 'l' || 'login': // 登录
         argvOptions[argv] = rootPath
         break
-      case 'o' || 'open':  // 打开项目
+      case 'o' || 'open': // 打开项目
         argvOptions[argv] = rootPath
         break
-      case 'p' || 'preview':  // 预览
+      case 'p' || 'preview': // 预览
         argvOptions[argv] = rootPath
         break
       case 'cp':
-        argvOptions['-p'] = rootPath  // 自定义预览
+        argvOptions['-p'] = rootPath // 自定义预览
         const customPreview = wechatwebdevtools['compile-condition']
         customPreview && (argvOptions['--compile-condition'] = JSON.stringify(customPreview))
         break
-      case 'auto-preview':  // 提交后自动预览
+      case 'auto-preview': // 提交后自动预览
         argvOptions[argv] = rootPath
         break
-      case 'u' || 'upload':   // 上传
+      case 'u' || 'upload': // 上传
         const { isProd, version, versionDesc } = require('../dist/config')
         const env = isProd ? '生产环境' : '测试环境'
         const desc = versionDesc ? `${env}: ${versionDesc}` : `${env}: ${dayjs().format('YYYY-MM-DD HH:mm:ss')} 上传`
@@ -201,10 +198,10 @@ const wechatwebdevtoolscli = (done) => {
         argvOptions['--upload-desc'] = desc
         argvOptions['--upload-info-output'] = path.resolve(__dirname, '../upload.info.json')
         break
-      case 'close':  // 关闭项目窗口
+      case 'close': // 关闭项目窗口
         argvOptions[argv] = rootPath
         break
-      case 'quit':  // 退出开发者工具
+      case 'quit': // 退出开发者工具
         argvOptions[argv] = ''
         break
       default:
@@ -212,7 +209,7 @@ const wechatwebdevtoolscli = (done) => {
   }
 
   const argvList = []
-  for (key in argvOptions) {
+  for (let key in argvOptions) {
     argvList.push(key, argvOptions[key])
   }
 

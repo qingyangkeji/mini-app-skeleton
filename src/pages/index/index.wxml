@@ -1,1 +1,3 @@
-<text>pages</text>
+<view class="container">
+  <text>page</text>
+</view>
