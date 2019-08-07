@@ -136,7 +136,7 @@ const createComponent = (done) => {
       path.basename = name
     }))
     .pipe(
-      gulp.dest(`${srcPath}/component/${destPath}/`)
+      gulp.dest(`${srcPath}/components/${destPath}/`)
     )
   done()
 }
