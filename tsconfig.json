@@ -1,0 +1,18 @@
+{
+  "include": [
+    "build/**/*.ts",
+    "gulpfile.ts",
+    "src/**/*.ts",
+    "template/**/*.ts",
+  ],
+  "compilerOptions": {
+    "noImplicitAny": true,
+    "target": "es6",
+    "moduleResolution": "node",
+    "strictNullChecks": true,
+    "typeRoots": [
+      "node_modules/@types",
+      "node_modules/miniprogram-api-typings",
+    ]
+  }
+}
