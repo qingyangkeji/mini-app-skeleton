@@ -1,14 +1,14 @@
 /**
  * 小程序配置文件
  */
-const isProd = false
-const isMock = false
-
+const isProd = false;
+const isMock = false;
 const config = {
-  isProd,
-  version: '1.0.0',
-  versionDesc: '',
-  rootUrl: isProd ? '' : isMock ? '' : ''
-}
+    isProd,
+    version: '1.0.0',
+    versionDesc: '',
+    rootUrl: isProd ? '' : isMock ? '' : ''
+};
+module.exports = config;
 
-module.exports = config
+//# sourceMappingURL=data:application/json;charset=utf8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImNvbmZpZy50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTs7R0FFRztBQUNILE1BQU0sTUFBTSxHQUFHLEtBQUssQ0FBQTtBQUNwQixNQUFNLE1BQU0sR0FBRyxLQUFLLENBQUE7QUFFcEIsTUFBTSxNQUFNLEdBQUc7SUFDYixNQUFNO0lBQ04sT0FBTyxFQUFFLE9BQU87SUFDaEIsV0FBVyxFQUFFLEVBQUU7SUFDZixPQUFPLEVBQUUsTUFBTSxDQUFDLENBQUMsQ0FBQyxFQUFFLENBQUMsQ0FBQyxDQUFDLE1BQU0sQ0FBQyxDQUFDLENBQUMsRUFBRSxDQUFDLENBQUMsQ0FBQyxFQUFFO0NBQ3hDLENBQUE7QUFFRCxNQUFNLENBQUMsT0FBTyxHQUFHLE1BQU0sQ0FBQSIsImZpbGUiOiJjb25maWcuanMiLCJzb3VyY2VzQ29udGVudCI6WyIvKipcbiAqIOWwj+eoi+W6j+mFjee9ruaWh+S7tlxuICovXG5jb25zdCBpc1Byb2QgPSBmYWxzZVxuY29uc3QgaXNNb2NrID0gZmFsc2VcblxuY29uc3QgY29uZmlnID0ge1xuICBpc1Byb2QsXG4gIHZlcnNpb246ICcxLjAuMCcsXG4gIHZlcnNpb25EZXNjOiAnJyxcbiAgcm9vdFVybDogaXNQcm9kID8gJycgOiBpc01vY2sgPyAnJyA6ICcnXG59XG5cbm1vZHVsZS5leHBvcnRzID0gY29uZmlnXG4iXX0=
