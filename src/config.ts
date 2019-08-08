@@ -8,7 +8,8 @@ const config = {
   isProd,
   version: '1.0.0',
   versionDesc: '',
+  env: isProd ? 'pro' : 'dev',
   rootUrl: isProd ? '' : isMock ? '' : ''
 }
 
-module.exports = config
+export default config

@@ -1,5 +1,8 @@
 .DS_Store
 dist
 node_modules
-.vscode
 package-lock.json
+
+# 生成的文件
+src/**/*.js
+src/**/*.wxss

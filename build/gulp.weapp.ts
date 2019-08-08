@@ -113,13 +113,15 @@ export class Weapp {
 
     let basePath: string,
         srcPath: string
-    if (filename) {
-      basePath = this.srcPath
-      srcPath = filename
-    } else {
-      basePath = ''
-      srcPath = this.tsSrc
-    }
+    // if (filename) {
+    //   basePath = this.srcPath
+    //   srcPath = filename
+    // } else {
+    //   basePath = ''
+    //   srcPath = this.tsSrc
+    // }
+    basePath = ''
+    srcPath = this.tsSrc
     return gulp.src(srcPath, { base: basePath })
       .pipe(sourcemaps.init())
       .pipe(tsProject())

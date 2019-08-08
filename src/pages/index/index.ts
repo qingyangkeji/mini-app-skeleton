@@ -1,6 +1,6 @@
 //index.js
 //获取应用实例
-import { IMyApp } from '../../app'
+import api from '../../api/index'
 
 const app = getApp()
 
@@ -18,6 +18,13 @@ Page({
     })
   },
   onLoad() {
+    const params = {
+      username: '',
+      password: ''
+    }
+    // api.login(params).then(res => {
+    //   console.log(res)
+    // })
     if (app.globalData.userInfo) {
       this.setData({
         userInfo: app.globalData.userInfo,
