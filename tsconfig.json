@@ -7,12 +7,10 @@
   ],
   "compilerOptions": {
     "noImplicitAny": true,
+    "noImplicitThis": true,
     "target": "es6",
     "moduleResolution": "node",
     "strictNullChecks": true,
-    "typeRoots": [
-      "node_modules/@types",
-      "node_modules/miniprogram-api-typings",
-    ]
+    "types": ["miniprogram-api-typings"]
   }
 }
