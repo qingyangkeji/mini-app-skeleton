@@ -15,9 +15,9 @@ App<IMyApp>({
 
     // 登录
     wx.login({
-      success(_res) {
-        // console.log(_res.code)
-        // 发送 _res.code 到后台换取 openId, sessionKey, unionId
+      success(res) {
+        console.log(res.code)
+        // 发送 res.code 到后台换取 openId, sessionKey, unionId
       }
     })
     // 获取用户信息

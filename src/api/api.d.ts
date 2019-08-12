@@ -1,10 +1,10 @@
 declare namespace Api {
   namespace login {
-    interface params {
+    interface IParams {
       username: string
       password: string
     }
-    interface response {
+    interface IResponse {
       name: string
       age: number
       openId: string

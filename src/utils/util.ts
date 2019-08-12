@@ -1,3 +1,8 @@
+function formatNumber (n: number): string {
+  const str = n.toString()
+  return str[1] ? str : '0' + str
+}
+
 export function formatTime(date: Date): string {
   const year = date.getFullYear()
   const month = date.getMonth() + 1
@@ -7,9 +12,4 @@ export function formatTime(date: Date): string {
   const second = date.getSeconds()
 
   return [year, month, day].map(formatNumber).join('/') + ' ' + [hour, minute, second].map(formatNumber).join(':')
-}
-
-const formatNumber = (n: number) => {
-  const str = n.toString()
-  return str[1] ? str : '0' + str
 }

@@ -13,8 +13,7 @@ import * as postcss from "gulp-postcss"
 import chalk from "chalk"
 import { getNowTime } from './gulp.utils'
 const autoprefixer = require('autoprefixer')
-
-const tsProject = ts.createProject('tsconfig.json')
+const eslint = require('gulp-eslint')
 
 export type Done = (error?: any) => void
 
@@ -123,8 +122,10 @@ export class Weapp {
     basePath = ''
     srcPath = this.tsSrc
     return gulp.src(srcPath, { base: basePath })
+      .pipe(eslint({ fix: true }))
+      .pipe(eslint.format())
       .pipe(sourcemaps.init())
-      .pipe(tsProject())
+      .pipe(ts.createProject('tsconfig.json')())
       .pipe(sourcemaps.write())
       .pipe(gulp.dest(this.srcPath))
       .on('end', () => {

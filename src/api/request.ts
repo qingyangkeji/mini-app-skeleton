@@ -1,12 +1,12 @@
 import config from '../config'
   
-export interface ReqConfig {
+export interface IReqConfig {
   showToast?: boolean
   contentType?: string
   loadingTitle?: string
 }
 
-interface SuccessRes<R> {
+interface ISuccessRes<R> {
   /** 开发者服务器返回的数据 */
   data: {
     data: R
@@ -20,7 +20,7 @@ interface SuccessRes<R> {
   errMsg: string
 }
 
-interface FailRes {
+interface IFailRes {
   errMsg: string
 }
 
@@ -31,7 +31,7 @@ interface FailRes {
  * @param params 请求参数
  * @param reqConfig 请求配置
  */
-export function request<R>(method: 'GET' | 'POST' | 'PUT' | 'DELETE', url: string, params = {}, reqConfig?: ReqConfig) {
+export function request<R>(method: 'GET' | 'POST' | 'PUT' | 'DELETE', url: string, params = {}, reqConfig?: IReqConfig): Promise<Pick<ISuccessRes<R>,'data'>["data"]> {
   const { showToast = true, contentType = 'application/json', loadingTitle = '' } = reqConfig || {}
 
   const token = wx.getStorageSync('token') || ''
@@ -41,7 +41,7 @@ export function request<R>(method: 'GET' | 'POST' | 'PUT' | 'DELETE', url: strin
     wx.setStorageSync('env', config.env)
   }
 
-  return new Promise<Pick<SuccessRes<R>,'data'>["data"] >((resolve, reject) => {
+  return new Promise<Pick<ISuccessRes<R>,'data'>["data"]>((resolve, reject) => {
     showToast && wx.showLoading({
       title: loadingTitle || '加载中'
     })
@@ -54,7 +54,7 @@ export function request<R>(method: 'GET' | 'POST' | 'PUT' | 'DELETE', url: strin
         'Authorization': `Bearer ${token}`
       },
       method: method,
-      success: (res: SuccessRes<R>) => {
+      success: (res: ISuccessRes<R>) => {
         showToast && wx.hideLoading()
         const { data } = res
         if (data.status === 200) {
@@ -72,7 +72,7 @@ export function request<R>(method: 'GET' | 'POST' | 'PUT' | 'DELETE', url: strin
           reject(data)
         }
       },
-      fail: (err: FailRes) => {
+      fail: (err: IFailRes) => {
         console.log('request fail:', err)
         if (err.errMsg && err.errMsg.indexOf('request:fail') > -1) {
           // setTimeout(() => {

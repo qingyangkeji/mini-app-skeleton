@@ -1,8 +1,8 @@
-import { request, ReqConfig } from './request'
+import { request, IReqConfig } from './request'
 
 export default {
   /** 登录 */
-  login(params: Api.login.params, reqConfig?: ReqConfig) {
-    return request<Api.login.response>('POST', `/self_logistics/login`, params, reqConfig)
+  login(params: Api.login.IParams, reqConfig?: IReqConfig) {
+    return request<Api.login.IResponse>('POST', `/self_logistics/login`, params, reqConfig)
   },
 }
