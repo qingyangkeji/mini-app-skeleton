@@ -11,19 +11,23 @@
   "globals": {
     "Atomics": "readonly",
     "SharedArrayBuffer": "readonly",
-    "wx": true,
-    "getCurrentPages": true,
-    "getApp": true,
-    "Page": true,
-    "Component": true,
-    "App": true
+    "wx": "readonly",
+    "getCurrentPages": "readonly",
+    "getApp": "readonly",
+    "Page": "readonly",
+    "Component": "readonly",
+    "App": "readonly"
   },
+  "root": true,
   "parserOptions": {
     "ecmaVersion": 2018,
     "sourceType": "module",
     "project": "./tsconfig.json"
   },
   "rules": {
+    // "space-before-blocks": "error",
+    // "space-before-function-paren": ["error"],
+    // "object-curly-spacing": ["error", "always"],
     "@typescript-eslint/interface-name-prefix": ["error", "always"],
     "@typescript-eslint/explicit-function-return-type": ["error", {
       "allowExpressions": true,
