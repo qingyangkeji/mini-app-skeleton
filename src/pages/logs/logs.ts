@@ -1,15 +1,30 @@
 // logs.js
 import { formatTime } from '../../utils/util'
 
-Page({
+interface DataType {
+  /** 日志 */
+  logs: string[]
+}
+interface CustomOption {
+  /** 获取日志 */
+  getLogs(): string[]
+}
+
+
+Page<DataType, CustomOption>({
   data: {
-    logs: [] as string[]
+    logs: []
+  },
+  getLogs() {
+    return (wx.getStorageSync('logs') || []).map((log: number) => {
+      return formatTime(new Date(log))
+    })
   },
   onLoad() {
     this.setData({
-      logs: (wx.getStorageSync('logs') || []).map((log: number) => {
-        return formatTime(new Date(log))
-      })
+      logs: this.getLogs()
     })
+
+    console.log(this.data.logs)
   }
 })

@@ -2678,10 +2678,10 @@ minipass@^2.2.1, minipass@^2.3.4:
     safe-buffer "^5.1.2"
     yallist "^3.0.0"
 
-miniprogram-api-typings@^2.7.7-1:
-  version "2.7.7-1"
-  resolved "https://registry.yarnpkg.com/miniprogram-api-typings/-/miniprogram-api-typings-2.7.7-1.tgz#8969d0896dedb60cb4da26001169c51de662f46b"
-  integrity sha512-hErfP0S54WUyb7Ee+43CFIC9MR5LIP97xT1wmnrxUFBMzY3QguCOT9RkAxPg6X7i/Z9P1KHwNqv8w47dKGGv/g==
+miniprogram-api-typings@^2.8.0:
+  version "2.8.0"
+  resolved "https://registry.yarnpkg.com/miniprogram-api-typings/-/miniprogram-api-typings-2.8.0.tgz#39b4d7166fb40fabe8e2da71efcb42c02f02e5b1"
+  integrity sha512-6wCBqhpT6KCKIPclBctMXGrXdoY2AND8FpQu0ZCo45BpiduJo0O/yYXsjGOZMDXAzUdTzHZAcQbHZWtp2Qmb8Q==
 
 minizlib@^1.1.1:
   version "1.2.1"
