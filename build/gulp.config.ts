@@ -1,22 +1,13 @@
+import * as path from "path"
+import { WeappConfig } from './gulp.weapp'
 
-const path = require('path')
-
-const srcPath = path.resolve(__dirname, '../src')
-const allowCopyExtList = ['.js', '.json', '.png', '.jpg', '.wxss', '.wxml', '.wxs']
-const copyFilePath = allowCopyExtList.reduce((arr, ext) => {
-  arr.push(`${srcPath}/**/*${ext}`)
-  return arr
-}, [])
-
-module.exports = {
+export const weappConfig: WeappConfig = {
   rootPath: path.resolve(__dirname, '../'),
-  srcPath,
-  allowCopyExtList,
-  copyFilePath,
+  tsSrc: path.resolve(__dirname, '../src/**/*.ts'),
   stylusPath: path.resolve(__dirname, '../src/**/*.styl'),
-  distPath: path.resolve(__dirname, '../dist'),
+  srcPath: path.resolve(__dirname, '../src'),
   templatePath: path.resolve(__dirname, '../template'),
-  wechatwebdevtools: {
+  weappCliConfig: {
     path: {
       mac: '/Applications/wechatwebdevtools.app/Contents/MacOS/cli',
       win: 'D:/微信web开发者工具/cli.bat' // or 'D:\\微信web开发者工具\\cli.bat'
@@ -32,7 +23,7 @@ module.exports = {
     ],
     // 配置自定义预览页面 路径&参数
     'compile-condition': {
-      pathName: 'pages/cabinets/cabinet-list/cabinet-list',
+      pathName: '',
       query: ''
     }
   }

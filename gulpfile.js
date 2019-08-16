@@ -1,10 +1,5 @@
-const { createPage, createComponent, build, wechatwebdevtoolscli } = require('./build/gulp.base')
-const { develop } = require('./build/gulp.dev')
+require("ts-node").register({
+  transpileOnly: true
+})
 
-module.exports = {
-  page: createPage,
-  comp: createComponent,
-  wechat: wechatwebdevtoolscli,
-  dev: develop,
-  default: build()
-}
+require("./build/gulp.index")

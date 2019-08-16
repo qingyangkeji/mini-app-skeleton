@@ -4,31 +4,34 @@
     "es6": true
   },
   "extends": [
-    "standard"
+    "plugin:@typescript-eslint/recommended"
   ],
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint"],
   "globals": {
     "Atomics": "readonly",
     "SharedArrayBuffer": "readonly",
-    "wx": true,
-    "getCurrentPages": true,
-    "getApp": true,
-    "Page": true,
-    "Component": true,
-    "App": true
+    "wx": "readonly",
+    "getCurrentPages": "readonly",
+    "getApp": "readonly",
+    "Page": "readonly",
+    "Component": "readonly",
+    "App": "readonly"
   },
+  "root": true,
   "parserOptions": {
     "ecmaVersion": 2018,
-    "sourceType": "module"
+    "sourceType": "module",
+    "project": "./tsconfig.json"
   },
   "rules": {
-    "space-before-function-paren": ["error", {
-      "anonymous": "always",
-      "named": "never",
-      "asyncArrow": "always"
+    "@typescript-eslint/interface-name-prefix": ["error", "always"],
+    "@typescript-eslint/explicit-function-return-type": ["error", {
+      "allowExpressions": true,
+      "allowTypedFunctionExpressions": true,
+      "allowHigherOrderFunctions": true
     }],
-    "camelcase": ["off"],
-    "prefer-promise-reject-errors": ["error", {"allowEmptyReject": true}],
-    "no-unused-expressions": ["off"],
-    "object-curly-spacing": ["error", "always"]
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/indent": ["error", 2]
   }
 }

@@ -1,6 +1,7 @@
 {
   "pages": [
-    "pages/index/index"
+    "pages/index/index",
+    "pages/logs/logs"
   ],
   "window": {
     "navigationBarTextStyle": "black",
@@ -19,5 +20,6 @@
       "desc": "你的定位将用于获取你当前的位置信息"
     }
   },
-  "debug": true
+  "debug": true,
+  "sitemapLocation": "sitemap.json"
 }

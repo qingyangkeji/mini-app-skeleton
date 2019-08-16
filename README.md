@@ -1,24 +1,23 @@
 # mini-app-skeleton 微信小程序脚手架
 
-轻量精悍，集成微信命令行。
+微信小程序原生开发框架，集成`TypeScript`、`Stylus`、微信命令行，提供`Request`、`Api`等架构方案。
 
-从此，解放你的双手，提升你的开发效率。
+支持`JS`、`TS`代码共存，低成本渐进项目迁移。
 
-从此，你将不再需要通过微信开发工具进行预览、上传，我们已经为你集成了微信全部开发命令。
+提供了`Snippets`代码片段，提高开发效率。
 
-从此，线上和测试环境将永不出错，编译代码自动显示当前环境。
+## 特性
 
-## Feature
-
-- [x] Stylus
-- [x] 生产环境、测试环境快速切换
+- [x] 集成`TypeScript`，提供类型支持
+- [x] 集成`Request`，`Api`架构方案
+- [x] 集成CSS预处理器Stylus
 - [x] 集成微信开发工具命令行[官方API](https://developers.weixin.qq.com/miniprogram/dev/devtools/cli.html)
-  - [x] 快速登录：命令行直接启动
-  - [x] 快速预览：命令行打印二维码
-  - [x] 自定义编译预览：扫码调试指定页面
-  - [x] 自动预览：无需扫码，手机自启
-  - [x] 一键上传：自动填充配置文件环境、版本号、版本说明
-  - [x] 一键关闭和退出：命令行无所不能。
+  - [x] 快速登录：`yarn l`命令行直接启动
+  - [x] 快速预览：`yarn p`命令行打印二维码
+  - [x] 自定义编译预览：`yarn cp`扫码调试指定页面
+  - [x] 自动预览：`yarn ap`无需扫码，手机自启
+  - [x] 一键上传：`yarn u`自动填充**服务器环境**、**版本号**、**版本说明**，上线版本信息更明确
+  - [x] 一键关闭和退出：`yarn close`、`yarn quit`
 - [ ] 版本记录管理
 
 ## 使用
@@ -78,8 +77,68 @@
 
 ## 上传流程
 
-- 更新[配置文件](src/config.js)的`version`版本号。
-- 修改[配置文件](src/config.js)的`isProd`，`true`表示生产环境。
-- 修改[配置文件](src/config.js)的`versionDesc`，完善当前版本的说明。
+- 更新[配置文件](src/config.ts)的`version`版本号。
+- 修改[配置文件](src/config.ts)的`isProd`，`true`表示生产环境。
+- 修改[配置文件](src/config.ts)的`versionDesc`，完善当前版本的说明。
 - `yarn u` 或者 `npm run u` 上传代码。
-> `yarn u` 会自动以[配置文件](src/config.js)中的`versionDesc`为描述，并附加环境信息。
+> `yarn u` 会自动以[配置文件](src/config.ts)中的`versionDesc`为描述，并附加环境信息。
+
+## 快速生成代码片段
+
+可以通过修改[.vscode](./.vscode)下的snippets文件进行增加和修改。
+> 使用snippets无需输入完整代码，只需要输入关键字母即可
+
+- `qy-api`：快速生成Api接口、参数结构、响应结构模板
+  ```ts
+    namespace getUserInfo {
+    interface IParams {
+      userId: string
+    }
+    interface IResponse {
+      name: string
+      city: string
+      openid: string
+    }
+  }
+  // /** 获取用户信息 */
+  // getUserInfo(params: Api.getUserInfo.IParams, reqConfig?: IReqConfig) {
+  //   return request<Api.getUserInfo.IResponse>('GET', `/user`, params, reqConfig)
+  // },
+  ```
+- `qy-api-call`：快速生成api接口调用模板
+  ```ts
+  const params = {
+    userId: ''
+  }
+  api.getUserInfo(params, { showToast: false }).then(({ data, message }) => {
+    // ...
+  }).catch(err => {
+    console.error(err)
+  })
+  ```
+- `qy-comment`：快速生成`/** 单行注释 */`模板
+  ```ts
+  /** 单行注释 */
+  ```
+- `qy-promise`：快速生成`Promise`模板
+  ```ts
+  return new Promise((resolve, reject) => {
+  
+  })
+  ```
+- `qy-import-variable`：快速生成引入某个模块暴露的变量模板
+  ```ts
+  import { format } from 'utils'
+  ```
+- `qy-import-api`：快速生成引入api模块模板
+  ```ts
+  import api from "../api/index"
+  ```
+- `qy-weapp-toast`：快速生成小程序toast
+  ```ts
+  wx.showToast({
+    icon: 'none',
+    title: '提交成功',
+    duration: 1500
+  })
+  ```
