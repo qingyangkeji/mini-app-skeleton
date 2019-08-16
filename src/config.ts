@@ -4,12 +4,13 @@
 const isProd = false
 const isMock = false
 
-const config = {
+const config: IConfig = {
   isProd,
   version: '1.0.0',
   versionDesc: '',
   env: isProd ? 'pro' : 'dev',
-  rootUrl: isProd ? '' : isMock ? '' : ''
+  rootUrl: isProd ? '' : isMock ? '' : '',
+  tabBarUrlList: []
 }
 
 export default config

@@ -1,15 +1,36 @@
-function formatNumber (n: number): string {
-  const str = n.toString()
-  return str[1] ? str : '0' + str
+import config from '../config'
+const { tabBarUrlList } = config
+
+/** 是否以某个片段字符串开头 */
+const isStartWith = (string: string, str: string): boolean => {
+  return string.slice(0, str.length) === str
 }
 
-export function formatTime(date: Date): string {
-  const year = date.getFullYear()
-  const month = date.getMonth() + 1
-  const day = date.getDate()
-  const hour = date.getHours()
-  const minute = date.getMinutes()
-  const second = date.getSeconds()
+/** 格式化小程序url */
+const formatPagesUrl = (url: string): string => {
+  return isStartWith(url, '/pages') ? url : isStartWith(url, 'pages') ? `/${url}` : ''
+}
 
-  return [year, month, day].map(formatNumber).join('/') + ' ' + [hour, minute, second].map(formatNumber).join(':')
+/** 页面跳转，合并处理switchTab和navigateTo */
+const navigateTo = (url: string, params?: IAnyObject): void => {
+  let paramsStr = ''
+  url = formatPagesUrl(url)
+  if (params && tabBarUrlList.indexOf(url) === -1) {
+    paramsStr = Object.keys(params).map(key => `${key}=${params[key]}`).join('&')
+    url += `?${paramsStr}`
+  }
+  switch (true) {
+    case tabBarUrlList.indexOf(url) > -1:
+      wx.switchTab({ url })
+    break
+
+    default:
+      wx.navigateTo({ url })
+  }
+}
+
+export {
+  isStartWith,
+  formatPagesUrl,
+  navigateTo
 }
