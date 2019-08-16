@@ -25,9 +25,6 @@
     "project": "./tsconfig.json"
   },
   "rules": {
-    // "space-before-blocks": "error",
-    // "space-before-function-paren": ["error"],
-    // "object-curly-spacing": ["error", "always"],
     "@typescript-eslint/interface-name-prefix": ["error", "always"],
     "@typescript-eslint/explicit-function-return-type": ["error", {
       "allowExpressions": true,

@@ -1,7 +1,6 @@
 {
   "include": [
     "build/**/*.ts",
-    "gulpfile.ts",
     "src/**/*.ts",
     "template/**/*.ts",
   ],
@@ -11,6 +10,6 @@
     "target": "es6",
     "moduleResolution": "node",
     "strictNullChecks": true,
-    "types": ["miniprogram-api-typings"]
+    "types": ["miniprogram-api-typings", "node"]
   }
 }

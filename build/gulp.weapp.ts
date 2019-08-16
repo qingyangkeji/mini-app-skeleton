@@ -12,6 +12,8 @@ import * as minimist from "minimist"
 import * as postcss from "gulp-postcss"
 import chalk from "chalk"
 import { getNowTime } from './gulp.utils'
+// @ts-ignore
+import srcConfig from '../src/config.ts'
 const autoprefixer = require('autoprefixer')
 const eslint = require('gulp-eslint')
 
@@ -276,7 +278,7 @@ export class Weapp {
             customPreview && (argvOptions['--compile-condition'] = JSON.stringify(customPreview))
             break
           case 'u' || 'upload': // 上传
-            const { isProd, version, versionDesc } = require(path.resolve(this.srcPath, 'config.ts'))
+            const { isProd, version, versionDesc } = srcConfig
             const env = isProd ? '生产环境' : '测试环境'
             const desc = versionDesc ? `${env}: ${versionDesc}` : `${env}: ${getNowTime()} 上传`
     
@@ -297,7 +299,7 @@ export class Weapp {
       const argvList = []
       for (let key in argvOptions) {
         argvList.push(key, argvOptions[key])
-      }    
+      }
       this.weappCommand(argvList)
       done()
     })

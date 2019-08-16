@@ -27,7 +27,7 @@
     "@types/gulp-sourcemaps": "^0.0.32",
     "@types/gulp-stylus": "^2.7.1",
     "@types/minimist": "^1.2.0",
-    "@types/node": "^12.6.8",
+    "@types/node": "^12.7.1",
     "@types/readable-stream": "^2.3.3",
     "@typescript-eslint/eslint-plugin": "^1.13.0",
     "@typescript-eslint/parser": "^1.13.0",
