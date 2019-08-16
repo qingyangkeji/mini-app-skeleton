@@ -1,0 +1,13 @@
+{
+	"小程序toast": {
+		"prefix": "qy-weapp-toast",
+		"body": [
+			"wx.showToast({",
+			"  icon: 'none',",
+			"  title: '$1',",
+			"  duration: 1500",
+			"})"
+		],
+		"description": "小程序toast"
+	}
+}

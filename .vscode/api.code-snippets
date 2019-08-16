@@ -1,0 +1,36 @@
+{
+	"Api接口、参数结构、响应结构": {
+		"prefix": "qy-api",
+		"body": [
+			"/** $4 */",
+			"namespace $1 {",
+			"  interface IParams {",
+			"    $5",
+			"  }",
+			"  interface IResponse {",
+			"    $6",
+			"  }",
+			"}",
+			"// /** $4 */",
+			"// $1(params: Api.$1.IParams, reqConfig?: IReqConfig) {",
+			"//   return request<Api.$1.IResponse>('$2', `$3`, params, reqConfig)",
+			"// },",
+			""
+		],
+		"description": "Api接口、参数结构、响应结构"
+	},
+	"api接口调用": {
+		"prefix": "qy-api-call",
+		"body": [
+			"const params: Api$1.IParams = {",
+			"  $2",
+			"}",
+			"api$1(params$3).then(({ data, message }: Api$1.IResponse) => {",
+			"  $4",
+			"}).catch(err => {",
+			"  console.error(err)",
+			"})"
+		],
+		"description": "api接口调用"
+	}
+}

@@ -1,0 +1,18 @@
+{
+	"/** 单行注释 */": {
+		"prefix": "qy-comment",
+		"body": [
+			"/** $1 */$2"
+		],
+		"description": "/** 单行注释 */"
+	},
+	"Promise": {
+		"prefix": "qy-promise",
+		"body": [
+			"return new Promise((resolve, reject) => {",
+			"  $1",
+			"})"
+		],
+		"description": "Promise"
+	}
+}
