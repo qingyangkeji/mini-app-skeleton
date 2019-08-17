@@ -1,7 +1,7 @@
 import config from '../config'
 
 /** Request请求封装 */
-export function request<R extends IRes>(method: 'GET' | 'POST' | 'PUT' | 'DELETE', url: string, params = {}, reqConfig?: IReqConfig): Promise<Pick<ISuccessRes<R>,'data'>["data"]> {
+export function request<R extends IRes>(method: 'GET' | 'POST' | 'PUT' | 'DELETE', url: string, params = {}, reqConfig?: IReqConfig): Promise<R> {
   const { showLoading = true, showToast = true, contentType = 'application/json', loadingTitle = '' } = reqConfig || {}
 
   const token = wx.getStorageSync('token') || ''
@@ -11,7 +11,7 @@ export function request<R extends IRes>(method: 'GET' | 'POST' | 'PUT' | 'DELETE
     wx.setStorageSync('env', config.env)
   }
 
-  return new Promise<ISuccessRes<R>["data"]>((resolve, reject) => {
+  return new Promise<R>((resolve, reject) => {
     showLoading && wx.showLoading({
       title: loadingTitle || '加载中'
     })
