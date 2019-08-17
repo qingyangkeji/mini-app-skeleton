@@ -11,7 +11,7 @@ export function request<R extends IRes>(method: 'GET' | 'POST' | 'PUT' | 'DELETE
     wx.setStorageSync('env', config.env)
   }
 
-  return new Promise<Pick<ISuccessRes<R>,'data'>["data"]>((resolve, reject) => {
+  return new Promise<ISuccessRes<R>["data"]>((resolve, reject) => {
     showLoading && wx.showLoading({
       title: loadingTitle || '加载中'
     })
