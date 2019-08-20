@@ -7,7 +7,6 @@ interface ICustomOption {
   getLogs(): string[]
 }
 
-
 Page<IDataType, ICustomOption>({
   data: {
     logs: []

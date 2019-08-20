@@ -12,16 +12,17 @@ export function request<R extends IRes>(method: 'GET' | 'POST' | 'PUT' | 'DELETE
   }
 
   return new Promise<R>((resolve, reject) => {
-    showLoading && wx.showLoading({
-      title: loadingTitle || '加载中'
-    })
+    showLoading &&
+      wx.showLoading({
+        title: loadingTitle || '加载中'
+      })
 
     wx.request({
       url: config.rootUrl + url,
       data: params,
       header: {
         'content-type': contentType,
-        'Authorization': `Bearer ${token}`
+        Authorization: `Bearer ${token}`
       },
       method: method,
       success: (res: ISuccessRes<R>) => {
@@ -32,12 +33,11 @@ export function request<R extends IRes>(method: 'GET' | 'POST' | 'PUT' | 'DELETE
         } else if (data.status === 401) {
           // 跳转到登录界面 / 登录
         } else {
-          showToast && (
+          showToast &&
             wx.showToast({
               icon: 'none',
               title: data.message
             })
-          )
           reject(data)
         }
       },

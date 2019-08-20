@@ -60,16 +60,16 @@ declare namespace event {
    * 输入框失去焦点时触发，event.detail = {value: value}
    */
   type InputBlur = ICustom<{
-      /** 输入框内容 */
-      value: string
+    /** 输入框内容 */
+    value: string
   }>
 
   /**
    * 点击完成按钮时触发，event.detail = {value: value}
    */
   type InputConfirm = ICustom<{
-      /** 输入框内容 */
-      value: string
+    /** 输入框内容 */
+    value: string
   }>
 
   /**
@@ -80,8 +80,8 @@ declare namespace event {
    * 最低基础库: `2.7.0`
    */
   type InputKeyboardHeightChange = ICustom<{
-      /** 键盘高度 */
-      height: number
-      duration: number
+    /** 键盘高度 */
+    height: number
+    duration: number
   }>
 }

@@ -16,21 +16,19 @@ const navigateTo = (url: string, params?: IAnyObject): void => {
   let paramsStr = ''
   url = formatPagesUrl(url)
   if (params && tabBarUrlList.indexOf(url) === -1) {
-    paramsStr = Object.keys(params).map(key => `${key}=${params[key]}`).join('&')
+    paramsStr = Object.keys(params)
+      .map(key => `${key}=${params[key]}`)
+      .join('&')
     url += `?${paramsStr}`
   }
   switch (true) {
     case tabBarUrlList.indexOf(url) > -1:
       wx.switchTab({ url })
-    break
+      break
 
     default:
       wx.navigateTo({ url })
   }
 }
 
-export {
-  isStartWith,
-  formatPagesUrl,
-  navigateTo
-}
+export { isStartWith, formatPagesUrl, navigateTo }

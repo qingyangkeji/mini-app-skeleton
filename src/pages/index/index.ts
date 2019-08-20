@@ -18,19 +18,22 @@ Page<IDataType, ICustomOption>({
       username: 'qingyangkeji',
       password: '123456'
     }
-    api.login(params, { showLoading: false }).then(({ data, message }: Api.login.IResponse) => {
-      wx.showToast({
-        icon: 'none',
-        title: message,
-        duration: 1500
+    api
+      .login(params, { showLoading: false })
+      .then(({ data, message }: Api.login.IResponse) => {
+        wx.showToast({
+          icon: 'none',
+          title: message,
+          duration: 1500
+        })
+        wx.setStorageSync('token', data.token)
+        this.setData({
+          userInfo: data.userInfo
+        })
       })
-      wx.setStorageSync('token', data.token)
-      this.setData({
-        userInfo: data.userInfo
+      .catch(err => {
+        console.error(err)
       })
-    }).catch(err => {
-      console.error(err)
-    })
   },
 
   onLoad() {
