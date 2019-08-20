@@ -10,8 +10,11 @@ import * as rename from "gulp-rename"
 import * as log from "fancy-log"
 import * as minimist from "minimist"
 import * as postcss from "gulp-postcss"
+import * as gulpIf from "gulp-if"
+import * as cache from "gulp-cached"
+import * as remember from "gulp-remember"
 import chalk from "chalk"
-import { getNowTime } from './gulp.utils'
+import { isFixed, getNowTime } from './gulp.utils'
 // @ts-ignore
 import srcConfig from '../src/config.ts'
 const autoprefixer = require('autoprefixer')
@@ -95,8 +98,11 @@ export class Weapp {
     })
     gulp.task("build:ts", () => {
       return gulp.src(this.tsSrc, { base: '' })
+        .pipe(cache('build:ts'))
+        .pipe(remember('build:ts'))
         .pipe(eslint({ fix: true }))
         .pipe(eslint.format())
+        .pipe(gulpIf(isFixed, gulp.dest(this.srcPath) ))
         .pipe(sourcemaps.init())
         .pipe(tsProject())
         .pipe(sourcemaps.write())
@@ -116,6 +122,8 @@ export class Weapp {
           fs.remove(_filename, () => {
             log.info(`Finished ${chalk.cyan("'delete:ts'")}`)
           })
+          delete (cache.caches['build:ts'] as any)[filename]
+          remember.forget('build:ts', filename)
         })
         stylusWatcher.on(event, (filename: string) => {
           log.info(`Starting ${chalk.cyan("'delete:styl'")} ${chalk.magenta(filename || '')}`)
