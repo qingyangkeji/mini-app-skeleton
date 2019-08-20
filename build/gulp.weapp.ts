@@ -16,6 +16,7 @@ import { getNowTime } from './gulp.utils'
 import srcConfig from '../src/config.ts'
 const autoprefixer = require('autoprefixer')
 const eslint = require('gulp-eslint')
+const tsProject = ts.createProject('tsconfig.json')
 
 export type Done = (error?: any) => void
 
@@ -63,30 +64,50 @@ export class Weapp {
   }
 
   init() {
-    gulp.task("build", () => {
-      this.buildTs()
-      return this.buildStylus()
-    })
-  
+    this.createBuild()
     this.createWatch()
     this.createWeappCmd()
 
-    gulp.task("default", gulp.series('build'))
-    gulp.task('dev', gulp.series('build', 'watch'))
+    gulp.task("default", gulp.parallel('build:styl', 'build:ts'))
+    gulp.task('dev', gulp.series(gulp.parallel('build:styl', 'build:ts'), 'watch'))
+  }
+
+  createBuild() {
+    gulp.task("build:styl", () => {
+      return gulp.src(this.stylusPath, { base: '' })
+        .pipe(stylus())
+        .pipe(
+          postcss([
+            autoprefixer({
+              browsers: [
+                '> 1%',
+                'last 2 versions'
+              ]
+            })
+          ])
+        )
+        .pipe(
+          rename(path => {
+            path.extname = '.wxss'
+          })
+        )
+        .pipe(gulp.dest(this.srcPath))
+    })
+    gulp.task("build:ts", () => {
+      return gulp.src(this.tsSrc, { base: '' })
+        .pipe(eslint({ fix: true }))
+        .pipe(eslint.format())
+        .pipe(sourcemaps.init())
+        .pipe(tsProject())
+        .pipe(sourcemaps.write())
+        .pipe(gulp.dest(this.srcPath))
+    })
   }
 
   createWatch() {
     gulp.task("watch", (done: Done) => {
-      const tsWatcher = gulp.watch(this.tsSrc)
-      const stylusWatcher = gulp.watch(this.stylusPath)
-      ;['change', 'add'].forEach(event => {
-        tsWatcher.on(event, (filename: string) => {
-          this.buildTs(filename)
-        })
-        stylusWatcher.on(event, (filename: string) => {
-          this.buildStylus(filename)
-        })
-      })
+      const tsWatcher = gulp.watch(this.tsSrc, gulp.series('build:ts'))
+      const stylusWatcher = gulp.watch(this.stylusPath, gulp.series('build:styl'))
       ;['unlink'].forEach(event => {
         tsWatcher.on(event, (filename: string) => {
           log.info(`Starting ${chalk.cyan("'delete:ts'")} ${chalk.magenta(filename || '')}`)
@@ -97,79 +118,16 @@ export class Weapp {
           })
         })
         stylusWatcher.on(event, (filename: string) => {
-          log.info(`Starting ${chalk.cyan("'delete:stylus'")} ${chalk.magenta(filename || '')}`)
+          log.info(`Starting ${chalk.cyan("'delete:styl'")} ${chalk.magenta(filename || '')}`)
           const _filename = filename
             .replace('.styl', '.wxss')
           fs.remove(_filename, () => {
-            log.info(`Finished ${chalk.cyan("'delete:stylus'")}`)
+            log.info(`Finished ${chalk.cyan("'delete:styl'")}`)
           })
         })
       })
       done()
     })
-  }
-
-  buildTs(filename?: string) {
-    log.info(`Starting ${chalk.cyan("'build:ts'")} ${chalk.magenta(filename || '')}`)
-
-    let basePath: string,
-        srcPath: string
-    // if (filename) {
-    //   basePath = this.srcPath
-    //   srcPath = filename
-    // } else {
-    //   basePath = ''
-    //   srcPath = this.tsSrc
-    // }
-    basePath = ''
-    srcPath = this.tsSrc
-    return gulp.src(srcPath, { base: basePath })
-      .pipe(eslint({ fix: true }))
-      .pipe(eslint.format())
-      .pipe(sourcemaps.init())
-      .pipe(ts.createProject('tsconfig.json')())
-      .pipe(sourcemaps.write())
-      .pipe(gulp.dest(this.srcPath))
-      .on('end', () => {
-        log.info(`Finished ${chalk.cyan("'build:ts'")}`)
-      })
-  }
-
-  buildStylus(filename?: string) {
-    log.info(`Starting ${chalk.cyan("'build:stylus'")} ${chalk.magenta(filename || '')}`)
-
-    let basePath: string,
-        srcPath: string
-    // if (filename) {
-    //   basePath = this.srcPath
-    //   srcPath = filename
-    // } else {
-    //   basePath = ''
-    //   srcPath = this.stylusPath
-    // }
-    basePath = ''
-    srcPath = this.stylusPath
-    return gulp.src(srcPath, { base: basePath })
-      .pipe(stylus())
-      .pipe(
-        postcss([
-          autoprefixer({
-            browsers: [
-              '> 1%',
-              'last 2 versions'
-            ]
-          })
-        ])
-      )
-      .pipe(
-        rename(path => {
-          path.extname = '.wxss'
-        })
-      )
-      .pipe(gulp.dest(this.srcPath))
-      .on('end', () => {
-        log.info(`Finished ${chalk.cyan("'build:stylus'")}`)
-      })
   }
 
   addPathToAppJson(pagePath: string) {
