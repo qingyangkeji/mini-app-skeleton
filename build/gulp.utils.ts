@@ -29,6 +29,10 @@ export function vinylIsStyl(fs: vinyl) {
   return fs.extname === '.styl'
 }
 
+export function isFixed(fs: vinyl) {
+  return fs.eslint && fs.eslint.fixed && fs.eslint.errorCount === 0
+}
+
 export function getNowTime() {
   function fillZero(num: number): string {
     return num < 10 ? `0${num}` : `${num}`

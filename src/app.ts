@@ -1,12 +1,8 @@
 interface IMyApp {
-  globalData: {
-
-  }
+  globalData: {}
 }
 
 App<IMyApp>({
-  onLaunch() {
-
-  },
+  onLaunch() {},
   globalData: {}
 })

@@ -8,5 +8,5 @@ export default {
   /** 获取用户信息 */
   getUserInfo(params: Api.Base.IParams, reqConfig?: IReqConfig) {
     return request<Api.Base.IResponse>('GET', `/userinfo`, params, reqConfig)
-  },
+  }
 }

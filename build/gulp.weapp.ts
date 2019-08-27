@@ -10,12 +10,15 @@ import * as rename from "gulp-rename"
 import * as log from "fancy-log"
 import * as minimist from "minimist"
 import * as postcss from "gulp-postcss"
+import * as gulpIf from "gulp-if"
+import * as cache from "gulp-cached"
+import * as remember from "gulp-remember"
+import * as Undertaker from 'Undertaker'
 import chalk from "chalk"
-import { getNowTime } from './gulp.utils'
-// @ts-ignore
-import srcConfig from '../src/config.ts'
+import { isFixed, getNowTime } from './gulp.utils'
 const autoprefixer = require('autoprefixer')
 const eslint = require('gulp-eslint')
+const tsProject = ts.createProject('tsconfig.json')
 
 export type Done = (error?: any) => void
 
@@ -63,30 +66,59 @@ export class Weapp {
   }
 
   init() {
-    gulp.task("build", () => {
-      this.buildTs()
-      return this.buildStylus()
+    gulp.task("project:env", (done: Done) => {
+      const { isProd, version } = require('../src/config').default
+      const env = isProd ? '生产环境' : '测试环境'
+      console.log(chalk.green(`[编译结果] ${env} ${version}`))
+      done()
     })
-  
+    this.createBuild()
     this.createWatch()
     this.createWeappCmd()
 
-    gulp.task("default", gulp.series('build'))
-    gulp.task('dev', gulp.series('build', 'watch'))
+    gulp.task("default", gulp.parallel('build:styl', 'build:ts'))
+    gulp.task('dev', gulp.series(gulp.parallel('build:styl', 'build:ts'), 'watch'))
+  }
+
+  createBuild() {
+    gulp.task("build:styl", () => {
+      return gulp.src(this.stylusPath, { base: '' })
+        .pipe(stylus())
+        .pipe(
+          postcss([
+            autoprefixer({
+              browsers: [
+                '> 1%',
+                'last 2 versions'
+              ]
+            })
+          ])
+        )
+        .pipe(
+          rename(path => {
+            path.extname = '.wxss'
+          })
+        )
+        .pipe(gulp.dest(this.srcPath))
+    })
+    gulp.task("build:ts", () => {
+      return gulp.src(this.tsSrc, { base: '' })
+        .pipe(cache('build:ts'))
+        .pipe(remember('build:ts'))
+        .pipe(eslint({ fix: true }))
+        .pipe(eslint.format())
+        .pipe(gulpIf(isFixed, gulp.dest(this.srcPath) ))
+        .pipe(sourcemaps.init())
+        .pipe(tsProject())
+        .pipe(sourcemaps.write())
+        .pipe(gulp.dest(this.srcPath))
+    })
   }
 
   createWatch() {
     gulp.task("watch", (done: Done) => {
-      const tsWatcher = gulp.watch(this.tsSrc)
-      const stylusWatcher = gulp.watch(this.stylusPath)
-      ;['change', 'add'].forEach(event => {
-        tsWatcher.on(event, (filename: string) => {
-          this.buildTs(filename)
-        })
-        stylusWatcher.on(event, (filename: string) => {
-          this.buildStylus(filename)
-        })
-      })
+      const tsWatcher = gulp.watch(this.tsSrc, gulp.series('build:ts'))
+      const stylusWatcher = gulp.watch(this.stylusPath, gulp.series('build:styl'))
       ;['unlink'].forEach(event => {
         tsWatcher.on(event, (filename: string) => {
           log.info(`Starting ${chalk.cyan("'delete:ts'")} ${chalk.magenta(filename || '')}`)
@@ -95,81 +127,20 @@ export class Weapp {
           fs.remove(_filename, () => {
             log.info(`Finished ${chalk.cyan("'delete:ts'")}`)
           })
+          delete (cache.caches['build:ts'] as any)[filename]
+          remember.forget('build:ts', filename)
         })
         stylusWatcher.on(event, (filename: string) => {
-          log.info(`Starting ${chalk.cyan("'delete:stylus'")} ${chalk.magenta(filename || '')}`)
+          log.info(`Starting ${chalk.cyan("'delete:styl'")} ${chalk.magenta(filename || '')}`)
           const _filename = filename
             .replace('.styl', '.wxss')
           fs.remove(_filename, () => {
-            log.info(`Finished ${chalk.cyan("'delete:stylus'")}`)
+            log.info(`Finished ${chalk.cyan("'delete:styl'")}`)
           })
         })
       })
       done()
     })
-  }
-
-  buildTs(filename?: string) {
-    log.info(`Starting ${chalk.cyan("'build:ts'")} ${chalk.magenta(filename || '')}`)
-
-    let basePath: string,
-        srcPath: string
-    // if (filename) {
-    //   basePath = this.srcPath
-    //   srcPath = filename
-    // } else {
-    //   basePath = ''
-    //   srcPath = this.tsSrc
-    // }
-    basePath = ''
-    srcPath = this.tsSrc
-    return gulp.src(srcPath, { base: basePath })
-      .pipe(eslint({ fix: true }))
-      .pipe(eslint.format())
-      .pipe(sourcemaps.init())
-      .pipe(ts.createProject('tsconfig.json')())
-      .pipe(sourcemaps.write())
-      .pipe(gulp.dest(this.srcPath))
-      .on('end', () => {
-        log.info(`Finished ${chalk.cyan("'build:ts'")}`)
-      })
-  }
-
-  buildStylus(filename?: string) {
-    log.info(`Starting ${chalk.cyan("'build:stylus'")} ${chalk.magenta(filename || '')}`)
-
-    let basePath: string,
-        srcPath: string
-    // if (filename) {
-    //   basePath = this.srcPath
-    //   srcPath = filename
-    // } else {
-    //   basePath = ''
-    //   srcPath = this.stylusPath
-    // }
-    basePath = ''
-    srcPath = this.stylusPath
-    return gulp.src(srcPath, { base: basePath })
-      .pipe(stylus())
-      .pipe(
-        postcss([
-          autoprefixer({
-            browsers: [
-              '> 1%',
-              'last 2 versions'
-            ]
-          })
-        ])
-      )
-      .pipe(
-        rename(path => {
-          path.extname = '.wxss'
-        })
-      )
-      .pipe(gulp.dest(this.srcPath))
-      .on('end', () => {
-        log.info(`Finished ${chalk.cyan("'build:stylus'")}`)
-      })
   }
 
   addPathToAppJson(pagePath: string) {
@@ -205,6 +176,21 @@ export class Weapp {
       let contents = lines.join('\r\n')
       console.log(chalk.red(contents))
     })
+  }
+
+  weappBuild() {
+    const params = minimist(process.argv.slice(2), {
+      boolean: this.weappCliConfig.args
+    })
+
+    const needBuildList = ['o', 'open', 'u', 'upload']
+    let returnVal: undefined | Undertaker.TaskFunction
+    needBuildList.forEach(item => {
+      if (!returnVal && params[item]) {
+        returnVal = gulp.series(gulp.parallel('build:styl', 'build:ts'), 'project:env')
+      }
+    })
+    return returnVal || gulp.series('project:env')
   }
 
   createWeappCmd() {
@@ -246,7 +232,7 @@ export class Weapp {
       done()
     })
 
-    gulp.task("weapp:cli", (done: Done) => {
+    gulp.task("weapp:exec", (done: Done) => {
       const params = minimist(process.argv.slice(2), {
         string: this.weappCliConfig.args,
       })
@@ -278,7 +264,7 @@ export class Weapp {
             customPreview && (argvOptions['--compile-condition'] = JSON.stringify(customPreview))
             break
           case 'u' || 'upload': // 上传
-            const { isProd, version, versionDesc } = srcConfig
+            const { isProd, version, versionDesc } = require('../src/config').default
             const env = isProd ? '生产环境' : '测试环境'
             const desc = versionDesc ? `${env}: ${versionDesc}` : `${env}: ${getNowTime()} 上传`
     
@@ -303,5 +289,7 @@ export class Weapp {
       this.weappCommand(argvList)
       done()
     })
+
+    gulp.task("weapp:cli", gulp.series(this.weappBuild(), 'weapp:exec'))
   }
 }

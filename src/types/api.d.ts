@@ -3,20 +3,20 @@ declare namespace Api {
   /** 登录 */
   namespace login {
     interface IParams {
-      username: string;
-      password: string;
+      username: string
+      password: string
     }
     interface IResponse extends IRes {
       data: {
-        token: string;
-        userInfo: IAnyObject;
-      };
+        token: string
+        userInfo: IAnyObject
+      }
     }
   }
 
   /** 兼容js */
   namespace Base {
-    type IParams = any;
-    type IResponse = any;
+    type IParams = any
+    type IResponse = any
   }
 }
