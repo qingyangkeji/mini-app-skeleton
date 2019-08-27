@@ -13,10 +13,9 @@ import * as postcss from "gulp-postcss"
 import * as gulpIf from "gulp-if"
 import * as cache from "gulp-cached"
 import * as remember from "gulp-remember"
+import * as Undertaker from 'Undertaker'
 import chalk from "chalk"
 import { isFixed, getNowTime } from './gulp.utils'
-// @ts-ignore
-import srcConfig from '../src/config.ts'
 const autoprefixer = require('autoprefixer')
 const eslint = require('gulp-eslint')
 const tsProject = ts.createProject('tsconfig.json')
@@ -67,6 +66,12 @@ export class Weapp {
   }
 
   init() {
+    gulp.task("project:env", (done: Done) => {
+      const { isProd, version } = require('../src/config').default
+      const env = isProd ? '生产环境' : '测试环境'
+      console.log(chalk.green(`[编译结果] ${env} ${version}`))
+      done()
+    })
     this.createBuild()
     this.createWatch()
     this.createWeappCmd()
@@ -173,6 +178,21 @@ export class Weapp {
     })
   }
 
+  weappBuild() {
+    const params = minimist(process.argv.slice(2), {
+      boolean: this.weappCliConfig.args
+    })
+
+    const needBuildList = ['o', 'open', 'u', 'upload']
+    let returnVal: undefined | Undertaker.TaskFunction
+    needBuildList.forEach(item => {
+      if (!returnVal && params[item]) {
+        returnVal = gulp.series(gulp.parallel('build:styl', 'build:ts'), 'project:env')
+      }
+    })
+    return returnVal || gulp.series('project:env')
+  }
+
   createWeappCmd() {
     gulp.task("page", (done: Done) => {
       const options = minimist(process.argv.slice(2), {
@@ -212,7 +232,7 @@ export class Weapp {
       done()
     })
 
-    gulp.task("weapp:cli", (done: Done) => {
+    gulp.task("weapp:exec", (done: Done) => {
       const params = minimist(process.argv.slice(2), {
         string: this.weappCliConfig.args,
       })
@@ -244,7 +264,7 @@ export class Weapp {
             customPreview && (argvOptions['--compile-condition'] = JSON.stringify(customPreview))
             break
           case 'u' || 'upload': // 上传
-            const { isProd, version, versionDesc } = srcConfig
+            const { isProd, version, versionDesc } = require('../src/config').default
             const env = isProd ? '生产环境' : '测试环境'
             const desc = versionDesc ? `${env}: ${versionDesc}` : `${env}: ${getNowTime()} 上传`
     
@@ -269,5 +289,7 @@ export class Weapp {
       this.weappCommand(argvList)
       done()
     })
+
+    gulp.task("weapp:cli", gulp.series(this.weappBuild(), 'weapp:exec'))
   }
 }

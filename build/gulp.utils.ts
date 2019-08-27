@@ -30,7 +30,7 @@ export function vinylIsStyl(fs: vinyl) {
 }
 
 export function isFixed(fs: vinyl) {
-  return fs.eslint && fs.eslint.fixed
+  return fs.eslint && fs.eslint.fixed && fs.eslint.errorCount === 0
 }
 
 export function getNowTime() {

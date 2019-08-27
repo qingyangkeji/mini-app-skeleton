@@ -4,7 +4,8 @@
     "es6": true
   },
   "extends": [
-    "plugin:@typescript-eslint/recommended"
+    "prettier",
+    "prettier/@typescript-eslint"
   ],
   "parser": "@typescript-eslint/parser",
   "plugins": ["@typescript-eslint", "prettier"],
@@ -33,7 +34,6 @@
       "allowTypedFunctionExpressions": true,
       "allowHigherOrderFunctions": true
     }],
-    "@typescript-eslint/no-explicit-any": "off",
-    "@typescript-eslint/indent": ["error", 2]
+    "@typescript-eslint/no-explicit-any": "off"
   }
 }

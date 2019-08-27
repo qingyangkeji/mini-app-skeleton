@@ -1,5 +1,5 @@
 {
-  "printWidth": 400,
+  "printWidth": 200,
   "eslintIntegration": true,
   "stylelintIntegration": true,
   "tabWidth": 2,
