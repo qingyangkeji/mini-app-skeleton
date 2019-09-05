@@ -11,6 +11,6 @@
     "module": "CommonJS",
     "moduleResolution": "node",
     "strictNullChecks": true,
-    "types": ["miniprogram-api-typings", "node"]
+    "types": ["node", "miniprogram-api-typings"]
   }
 }
