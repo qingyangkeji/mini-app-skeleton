@@ -7,7 +7,7 @@
 			"  interface IParams {",
 			"    $5",
 			"  }",
-			"  interface IResponse {",
+			"  interface IResponse extends IRes {",
 			"    $6",
 			"  }",
 			"}",
