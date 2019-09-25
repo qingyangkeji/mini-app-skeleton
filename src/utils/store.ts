@@ -1,54 +1,49 @@
-type TPage = WechatMiniprogram.Page.Constructor
-type TComponent = WechatMiniprogram.Component.Constructor
+/// <reference path="./store.d.ts" />
 
-type TPageLife = 
-  | 'onLoad'
-  | 'onShow'
-  | 'onReady'
-  | 'onHide'
-  | 'onUnload'
-  | 'onPullDownRefresh'
-  | 'onReachBottom'
-  | 'onShareAppMessage'
-  | 'onPageScroll'
-  | 'onTabItemTap'
-
-type IAnyObject = Record<string, any>
-
-export type TOptions =  {
-  /** 全局状态 */
-  state: IAnyObject
-  /** 全局方法 */
-  methods: Record<string, Function>
-  /** 在执行页面中周期事件时，将先执行pageLisnner，再执行原页面周期内事件 */
-  pageLisener: Partial<Record<TPageLife, Function>>
-  /** 是否开启局部模式，默认为false; 当我们想规定只有某些页面和组件使用$state时，就需开启此模式，设置为true。 */
-  openPart: boolean
-  /** Page、Component防改写 */
-  nonWritable: boolean
+App.Page = <TData extends WechatMiniprogram.Page.DataOption, TCustom extends WechatMiniprogram.Page.CustomOption>(
+  o: WechatMiniprogram.Page.Options<TData, TCustom>
+) => {
+  const options: WechatMiniprogram.Page.Options<TData & Store.Page.DataOptions, TCustom & Store.Page.CustomeOptions> = {
+    useStore: true,
+    useProp: [],
+    ...o,
+    data: {
+      ...o.data
+    },
+  }
+  options.data!.$state
+  Page<TData, TCustom>(options)
 }
 
-export interface StoreInstance {
-  /** 状态 */
-  $state: TOptions['state']
-  /** 页面+组件树 */
-  $r: any[]
+type TD = {
+  hehe: string
 }
+type TC = {
+  get(): void
+}
+App.Page<TD, TC>({
+  data: {
+    hehe: ''
+  },
+  get() {
+
+  }
+})
 
 const Version = '1.2.7'
 
 export default class Store {
   /** 状态 */
-  public readonly $state: TOptions['state']
+  public readonly $state: Store.TOptions['state']
   /** 页面+组件树 */
   private readonly $r: any[]
-  private readonly openPart: TOptions['openPart']
-  private readonly methods: TOptions['methods']
-  private readonly pageLisener: TOptions['pageLisener']
-  private readonly nonWritable: TOptions['nonWritable']
-  private readonly originPage: TPage
-  private readonly originComponent: TComponent
-  private readonly pageLife: TPageLife[] = [
+  private readonly openPart: Store.TOptions['openPart']
+  private readonly methods: Store.TOptions['methods']
+  private readonly pageLisener: Store.TOptions['pageLisener']
+  private readonly nonWritable: Store.TOptions['nonWritable']
+  private readonly originPage: WechatMiniprogram.Page.Constructor
+  private readonly originComponent: WechatMiniprogram.Component.Constructor
+  private readonly pageLife: Store.TPageLife[] = [
     'onLoad',
     'onShow',
     'onReady',
@@ -60,7 +55,7 @@ export default class Store {
     'onPageScroll',
     'onTabItemTap'
   ]
-  constructor({ state = {}, openPart = false, methods = {}, pageLisener = {}, nonWritable = false }: TOptions) {
+  constructor({ state = {}, openPart = false, methods = {}, pageLisener = {}, nonWritable = false }: Store.TOptions) {
     this.openPart = openPart
     this.methods = methods
     this.pageLisener = pageLisener
@@ -75,6 +70,7 @@ export default class Store {
     }
     // 页面+组件树
     this.$r = []
+    this.rewrite()
   }
   /** 创建时，添加组件 */
   private create(r: any, o: any = {}) {
@@ -113,6 +109,120 @@ export default class Store {
       this.$r.splice(index, 1)
     }
   }
+  private rewrite() {
+    // 重写Page
+    App.Page = <TData extends WechatMiniprogram.Page.DataOption, TCustom extends WechatMiniprogram.Page.CustomOption>(
+      o: WechatMiniprogram.Page.Options<TData, TCustom>
+    ) => {
+      const options: WechatMiniprogram.Page.Options<TData & Store.Page.DataOptions, TCustom & Store.Page.CustomeOptions> = {
+        useStore: true,
+        useProp: [],
+        ...o
+      }
+      const { canUseStore, methods, pageLife, create, destroy, pageLisener } = this
+      if (canUseStore(options)) {
+        // 状态注入
+        options.data!.$state = this.$state
+      }
+      // 行为注入
+      Object.keys(methods).forEach(key => {
+        // 不能是周期事件
+        if (
+          typeof methods[key] === 'function' &&
+          !pageLife.some(item => item === key)
+        ) {
+          options[key] = methods[key]
+        }
+      })
+      // 覆盖原周期
+      const originCreate = options.onLoad
+      options.onLoad = function() {
+        create(this, options)
+        originCreate && originCreate.apply(this, arguments)
+      }
+      const originonDestroy = options.onUnload
+      options.onUnload = function() {
+        destroy(this)
+        originonDestroy && originonDestroy.apply(this, arguments)
+      }
+      // 其他页面周期事件注入 pageListener
+      Object.keys(pageLisener).forEach((key: Store.TPageLife) => {
+        // 不能是周期事件
+        if (
+          typeof pageLisener[key] === 'function' &&
+          pageLife.some(item => item === key)
+        ) {
+          const originLife = options[key]
+          options[key] = function() {
+            pageLisener[key].apply(this, arguments)
+            originLife && originLife.apply(this, arguments)
+          }
+        }
+      })
+      this.originPage<TData, TCustom>(options)
+    }
+
+    if (!this.nonWritable) {
+      try {
+        Page = App.Page
+      } catch (e) {}
+    }
+
+    // 重写组件
+    App.Component = function(o = {}, ...args) {
+      // 状态注入
+      if (canUseStore(o)) {
+        o.data = Object.assign(o.data || {}, {
+          $state: _store.$state
+        })
+      }
+      // 行为注入
+      Object.keys(methods).forEach(key => {
+        // 不能是周期事件
+        if (
+          typeof methods[key] === 'function' &&
+          !pageLife.some(item => item === key)
+        ) {
+          o.methods || (o.methods = {})
+          o.methods[key] = methods[key]
+        }
+      })
+      // behavior
+      if (behavior) {
+        o.behaviors = [behavior, ...(o.behaviors || [])]
+      }
+      const {
+        lifetimes = {}
+      } = o
+
+      let originCreate = lifetimes.attached || o.attached,
+        originonDestroy = lifetimes.detached || o.detached
+      const attached = function() {
+        _create(this, o)
+        originCreate && originCreate.apply(this, arguments)
+      }
+
+      const detached = function() {
+        _destroy(this)
+        originonDestroy && originonDestroy.apply(this, arguments)
+      }
+      if (_typeOf(o.lifetimes) === TYPE_OBJECT) {
+        o.lifetimes.attached = attached
+        o.lifetimes.detached = detached
+      } else {
+        o.attached = attached
+        o.detached = detached
+      }
+
+      // 覆盖原周期
+      originComponent(o, ...args)
+    }
+    if (!this.nonWritable) {
+      try {
+        Component = App.Component
+      } catch (e) {}
+    }
+  }
 }
 
 const utils = {
@@ -141,8 +251,8 @@ const utils = {
     return JSON.parse(JSON.stringify(o))
   },
   /** filterObjectByKeys */
-  filterKey(obj: IAnyObject, useKeys: string[] = [], fn: (key: string, usekey: string) => boolean) {
-    const result: IAnyObject = {}
+  filterKey(obj: Store.IAnyObject, useKeys: string[] = [], fn: (key: string, usekey: string) => boolean) {
+    const result: Store.IAnyObject = {}
     Object.keys(obj)
       .filter(key => useKeys.some(usekey => fn(key, usekey)))
       .forEach(key => {
