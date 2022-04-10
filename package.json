@@ -55,7 +55,7 @@
     "gulp-sourcemaps": "^2.6.5",
     "gulp-stylus": "^2.7.0",
     "gulp-typescript": "^5.0.1",
-    "minimist": "^1.2.0",
+    "minimist": "^1.2.6",
     "miniprogram-api-typings": "^2.8.0",
     "prettier": "^1.18.2",
     "readable-stream": "^3.4.0",
